@@ -17,7 +17,15 @@ export const postRouter = router({
                 where: {},
                 cursor: cursor ? { id: cursor } : undefined,
                 orderBy: {
-                    createdAt: "desc",
+                    score: "desc",
+                },
+                include: {
+                    author: { select: { name: true } },
+                    _count: {
+                        select: {
+                            Comment: true,
+                        },
+                    },
                 },
             });
 

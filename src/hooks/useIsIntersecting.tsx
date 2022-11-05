@@ -10,11 +10,10 @@ export function useIsIntersecting<TElement extends HTMLElement>() {
         if (!ref.current) {
             return;
         }
-        const observer = new IntersectionObserver(([entry]) =>
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            setIsIntersecting(entry.isIntersecting)
-        );
+        const observer = new IntersectionObserver(([entry]) => {
+            if (!entry) return;
+            setIsIntersecting(entry.isIntersecting);
+        });
         observer.observe(ref.current);
         return () => {
             observer.disconnect();
