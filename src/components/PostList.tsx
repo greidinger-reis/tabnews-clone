@@ -9,14 +9,15 @@ import { trpc } from "~/utils/trpc";
 interface PostListProps {
     initialData?: any;
     recents?: boolean;
+    userName?: string;
 }
-export function PostList(props: PostListProps) {
+export function PostList({userName,recents,initialData}: PostListProps) {
     const postScoreMap = new Map<string, number>();
 
     const [isLoadMoreVisible, ref] = useIsIntersecting<HTMLDivElement>();
 
-    const query = trpc.posts.getAll.useInfiniteQuery(
-        { limit: 15, recents: props.recents },
+    const query = trpc.posts.list.useInfiniteQuery(
+        { limit: 15, recents, userName },
         {
             getNextPageParam: (lastPage) => lastPage.nextCursor,
             refetchOnMount: false,
@@ -36,7 +37,10 @@ export function PostList(props: PostListProps) {
 
     return (
         <div>
-            <div className="mx-auto flex w-full flex-col gap-2 p-4 sm:w-4/5">
+            <div className="mx-auto flex w-full flex-col gap-2 p-4 sm:w-3/4">
+                {
+                    userName ? <h1 className="text-3xl font-bold border-b border-zinc-300 pb-4 mb-4">{userName}</h1> : null
+                }
                 {query.isLoading ? (
                     <div className="flex w-full items-center justify-center p-8">
                         <Spinner />
