@@ -56,7 +56,7 @@ export default function CadastroPage() {
                                 id="password"
                                 className="block w-full appearance-none rounded border border-gray-400 bg-white py-3 px-3 leading-tight text-gray-700 focus:outline-none"
                                 type="password"
-                                placeholder="Sua senha"
+                                placeholder="Uma senha forte"
                                 required
                             />
                         </div>
