@@ -10,7 +10,7 @@ async function main() {
             data: {
                 title: faker.lorem.sentence(),
                 content: faker.lorem.paragraphs(),
-                score: Math.floor(Math.random() * 100),
+                score: i,
                 author: {
                     connect: {
                         id: "admin",

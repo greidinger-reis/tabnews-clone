@@ -43,8 +43,7 @@ export default function HomePage() {
 
     return (
         <div>
-            {/* <button onClick={() => console.log(postScoreMap)}>log</button> */}
-            <div className="flex flex-col gap-2 p-4">
+            <div className="mx-auto flex w-full flex-col gap-2 p-4 sm:w-4/5">
                 {query.isLoading ? (
                     <div className="flex w-full items-center justify-center p-8">
                         <Spinner />
@@ -57,7 +56,7 @@ export default function HomePage() {
                             return (
                                 <div
                                     key={post.id}
-                                    className="rounded border bg-white py-4 px-6 text-zinc-700 drop-shadow"
+                                    className="w-full rounded border bg-white py-4 px-6 text-zinc-700 drop-shadow"
                                 >
                                     <div className="font-medium">
                                         <span>
@@ -72,7 +71,7 @@ export default function HomePage() {
                                             className="hover:underline"
                                             href={`/${post.authorId}/${post.id}`}
                                         >
-                                            {post.title} {post.id}
+                                            {post.title}
                                         </Link>
                                     </div>
                                     <div>

@@ -31,7 +31,7 @@ function Navbar() {
     return (
         <header
             style={{ height: HEADER_HEIGHT }}
-            className="flex items-center justify-between bg-zinc-800 px-4 text-white"
+            className="flex items-center justify-between gap-4 bg-zinc-800 px-4 text-white"
         >
             <ul className="flex items-center gap-4 text-sm font-medium">
                 <li>
