@@ -72,25 +72,25 @@ function Navbar() {
                     </Link>
                 </li>
             </ul>
-            <div>
+            <div className="text-sm font-medium">
                 {session ? (
-                    <div>
+                    <div className="flex items-center gap-1">
                         <span>Olá, {session.user?.name}</span>
                         <Dropdown
                             button={
                                 <button>
-                                    <FiChevronDown />
+                                    <FiChevronDown className="mt-1" />
                                 </button>
                             }
                         >
-                            <ul>
-                                <li>
+                            <ul className="space-y-1 text-zinc-700">
+                                <li className="hover:text-zinc-400">
                                     <Link href="/perfil/posts">Meus posts</Link>
                                 </li>
-                                <li>
+                                <li className="hover:text-zinc-400">
                                     <Link href="/perfil">Perfil</Link>
                                 </li>
-                                <li>
+                                <li className="hover:text-zinc-400">
                                     <button onClick={() => signOut()}>
                                         Sair
                                     </button>
