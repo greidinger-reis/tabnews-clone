@@ -12,7 +12,7 @@ export const getStaticProps: GetStaticProps = async () => {
         transformer: superjson,
     });
 
-    await ssg.posts.getAll.prefetchInfinite({ limit: 15 });
+    await ssg.posts.list.prefetchInfinite({ limit: 15 });
 
     return {
         props: { dehydratedState: ssg.dehydrate() },
