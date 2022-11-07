@@ -4,7 +4,6 @@ import { ptBR } from "date-fns/locale";
 import Markdown from "markdown-to-jsx";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { trpc } from "~/utils/trpc";
-import { useState } from "react";
 import { useSession } from "next-auth/react";
 import classNames from "classnames";
 
