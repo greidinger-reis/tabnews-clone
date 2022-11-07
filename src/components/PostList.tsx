@@ -66,7 +66,7 @@ export function PostList({userName,recents,initialData}: PostListProps) {
                                         </span>{" "}
                                         <Link
                                             className="hover:underline"
-                                            href={`/${post.authorId}/${post.id}`}
+                                            href={`/${post.author.name}/${post.slug}`}
                                         >
                                             {post.title}
                                         </Link>

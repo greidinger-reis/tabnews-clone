@@ -16,6 +16,7 @@ datasource db {
 
 model Post {
     id       String    @id @default(cuid())
+    slug     String
     authorId String
     title    String
     content  String
