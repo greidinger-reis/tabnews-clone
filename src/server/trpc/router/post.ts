@@ -23,20 +23,19 @@ export const postRouter = router({
                               name: userName,
                           },
                       }
-                    : {},
+                    : undefined,
                 cursor: cursor ? { id: cursor } : undefined,
-                orderBy: recents // if recents is true, order by createdAt, otherwise order by score
+                orderBy: recents // if recents is true, order by createdAt
                     ? {
                           createdAt: "desc",
                       }
-                    : {
-                          score: "desc",
-                      },
+                    : undefined,
                 include: {
                     author: { select: { name: true } },
                     _count: {
                         select: {
                             Comment: true,
+                            Likes: true,
                         },
                     },
                 },
@@ -54,7 +53,7 @@ export const postRouter = router({
                 nextCursor,
             };
         }),
-    findById: publicProcedure
+    find: publicProcedure
         .input(z.object({ slug: z.string(), userName: z.string() }))
         .query(async ({ input, ctx }) => {
             const { slug, userName } = input;
@@ -64,6 +63,17 @@ export const postRouter = router({
                     author: {
                         select: {
                             name: true,
+                        },
+                    },
+                    Likes: {
+                        select: {
+                            userId: true,
+                        },
+                    },
+                    _count: {
+                        select: {
+                            Comment: true,
+                            Likes: true,
                         },
                     },
                 },

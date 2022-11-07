@@ -20,11 +20,21 @@ model Post {
     authorId String
     title    String
     content  String
-    score    Int
     Comment  Comment[]
+    Likes    Like[]
 
     author User @relation(fields: [authorId], references: [id])
 
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Like {
+    id        String   @id @default(cuid())
+    postId    String
+    userId    String
+    Post      Post     @relation(fields: [postId], references: [id])
+    User      User     @relation(fields: [userId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -83,6 +93,7 @@ model User {
     sessions      Session[]
     Post          Post[]
     Comment       Comment[]
+    Likes         Like[]
 }
 
 model VerificationToken {

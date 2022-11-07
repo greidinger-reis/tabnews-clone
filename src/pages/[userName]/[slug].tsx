@@ -12,11 +12,14 @@ export default function PostPage() {
     const router = useRouter();
     const { slug, userName } = router.query as unknown as RouterQuery;
 
-    const query = trpc.posts.findById.useQuery({ slug, userName }, {
-        enabled: !!slug && !!userName,
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-    });
+    const query = trpc.posts.find.useQuery(
+        { slug, userName },
+        {
+            enabled: !!slug && !!userName,
+            refetchOnWindowFocus: false,
+            refetchOnMount: false,
+        }
+    );
 
     return (
         <div>
