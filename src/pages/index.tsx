@@ -1,9 +1,9 @@
-import { GetStaticProps } from "next";
+import type { GetStaticProps } from "next";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { appRouter } from "~/server/trpc/router/_app";
 import { createContextInner } from "~/server/trpc/context";
 import superjson from "superjson";
-import { PostList}  from "~/components/PostList";
+import { PostList } from "~/components/PostList";
 
 export const getStaticProps: GetStaticProps = async () => {
     const ssg = createProxySSGHelpers({
