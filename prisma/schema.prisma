@@ -30,11 +30,15 @@ model Post {
 }
 
 model Like {
-    id        String   @id @default(cuid())
+    id        String  @id @default(cuid())
     postId    String
     userId    String
-    Post      Post     @relation(fields: [postId], references: [id])
-    User      User     @relation(fields: [userId], references: [id])
+    commentId String?
+
+    Post    Post     @relation(fields: [postId], references: [id])
+    User    User     @relation(fields: [userId], references: [id])
+    Comment Comment? @relation(fields: [commentId], references: [id])
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -42,15 +46,15 @@ model Like {
 model Comment {
     id       String  @id @default(cuid())
     postId   String
+    parentId String?
     authorId String
     content  String
-    score    Int
-    parentId String?
+    likes    Like[]
 
     parent   Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
     children Comment[] @relation("CommentToComment")
-    author   User      @relation(fields: [authorId], references: [id])
     post     Post      @relation(fields: [postId], references: [id])
+    author   User      @relation(fields: [authorId], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

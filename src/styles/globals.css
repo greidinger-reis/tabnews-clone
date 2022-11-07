@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.btn {
+    @apply flex items-center justify-center rounded bg-zinc-700 px-4 py-2 transition-all hover:bg-zinc-800;
+}
+
+.btn-blue {
+    @apply flex items-center justify-center rounded bg-blue-500 px-4 py-2 transition-all hover:bg-blue-700;
+}
+
+.btn-red {
+    @apply flex items-center justify-center rounded bg-red-500 px-4 py-2 transition-all hover:bg-red-700;
+}
+
+.btn-green {
+    @apply flex items-center justify-center rounded bg-green-500 px-4 py-2 transition-all hover:bg-green-700;
+}
+
+.btn-yellow {
+    @apply flex items-center justify-center rounded bg-yellow-500 px-4 py-2 transition-all hover:bg-yellow-700;
+}

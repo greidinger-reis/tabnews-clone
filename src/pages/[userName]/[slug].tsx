@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { trpc } from "~/utils/trpc";
 import { Post } from "~/components/Post";
 import Spinner from "~/components/Spinner";
+import { CommentForm } from "~/components/comments";
 
 interface RouterQuery {
     userName: string;
@@ -16,8 +17,6 @@ export default function PostPage() {
         { slug, userName },
         {
             enabled: !!slug && !!userName,
-            refetchOnWindowFocus: false,
-            refetchOnMount: false,
         }
     );
 
@@ -29,7 +28,12 @@ export default function PostPage() {
                 </div>
             )}
             {query.isError && <div>Erro ao carregar o post</div>}
-            {query.data && <Post post={query.data} />}
+            {query.data && (
+                <>
+                    <Post post={query.data} />
+                    <CommentForm postId={query.data.id} />
+                </>
+            )}
         </div>
     );
 }
