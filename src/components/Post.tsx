@@ -6,11 +6,13 @@ import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { trpc } from "~/utils/trpc";
 import { useSession } from "next-auth/react";
 import classNames from "classnames";
+import { useRouter } from "next/router";
 
 type PostQueryOutput = Outputs["posts"]["find"];
 
 export function Post({ post }: { post: PostQueryOutput }) {
     const session = useSession();
+    const router = useRouter();
     const trpcContext = trpc.useContext();
     const addLike = trpc.likes.add.useMutation();
     const removeLike = trpc.likes.remove.useMutation();
@@ -20,6 +22,10 @@ export function Post({ post }: { post: PostQueryOutput }) {
     );
 
     async function handleAddLike() {
+        if (!session.data) {
+            router.push("/login");
+            return;
+        }
         if (userHasLiked) return;
 
         const result = await addLike.mutateAsync({ postId: post.id });
@@ -34,6 +40,10 @@ export function Post({ post }: { post: PostQueryOutput }) {
     }
 
     async function handleRemoveLike() {
+        if (!session.data) {
+            router.push("/login");
+            return;
+        }
         if (!userHasLiked) return;
 
         const result = await removeLike.mutateAsync({ postId: post.id });

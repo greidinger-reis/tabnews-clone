@@ -3,23 +3,23 @@
 @tailwind utilities;
 
 .btn {
-    @apply flex items-center justify-center rounded bg-zinc-700 px-4 py-2 transition-all hover:bg-zinc-800;
+    @apply flex items-center justify-center rounded-md border border-zinc-700/50 bg-zinc-600 px-4 py-2 transition-all hover:bg-zinc-700;
 }
 
 .btn-blue {
-    @apply flex items-center justify-center rounded bg-blue-500 px-4 py-2 transition-all hover:bg-blue-700;
+    @apply flex items-center justify-center rounded-md border border-blue-600/50 bg-blue-500 px-4 py-2 transition-all hover:bg-blue-600;
 }
 
 .btn-red {
-    @apply flex items-center justify-center rounded bg-red-500 px-4 py-2 transition-all hover:bg-red-700;
+    @apply flex items-center justify-center rounded-md border border-red-600/50 bg-red-400 px-4 py-2 transition-all hover:bg-red-500;
 }
 
 .btn-green {
-    @apply flex items-center justify-center rounded bg-green-500 px-4 py-2 transition-all hover:bg-green-700;
+    @apply flex items-center justify-center rounded-md border border-green-700/50 bg-green-600 px-4 py-2 transition-all hover:bg-green-700;
 }
 
 .btn-yellow {
-    @apply flex items-center justify-center rounded bg-yellow-500 px-4 py-2 transition-all hover:bg-yellow-700;
+    @apply flex items-center justify-center rounded-md border border-yellow-600/50 bg-yellow-500 px-4 py-2 transition-all hover:bg-yellow-600;
 }
 
 #nprogress {
