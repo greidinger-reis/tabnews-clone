@@ -2,8 +2,8 @@ import { HEADER_HEIGHT } from "../_app";
 import { AiFillGithub, AiOutlineTwitter } from "react-icons/ai";
 import { FaDiscord } from "react-icons/fa";
 import { signIn } from "next-auth/react";
-import type { GetServerSideProps } from "next";
-import { getServerAuthSession } from "~/server/common/get-server-auth-session";
+// import type { GetServerSideProps } from "next";
+// import { getServerAuthSession } from "~/server/common/get-server-auth-session";
 
 export default function LoginPage() {
     return (
@@ -20,11 +20,12 @@ export default function LoginPage() {
                         <div className="mb-6 w-full px-3 md:w-full">
                             <label
                                 className="ml-1 mb-1 block text-sm font-medium tracking-wide text-gray-700"
-                                htmlFor="Password"
+                                htmlFor="email"
                             >
                                 Email
                             </label>
                             <input
+                                name="email"
                                 className="block w-full appearance-none rounded border border-gray-400 bg-white py-3 px-3 leading-tight text-gray-700 focus:outline-none"
                                 type="email"
                                 required
@@ -33,11 +34,12 @@ export default function LoginPage() {
                         <div className="mb-6 w-full px-3 md:w-full">
                             <label
                                 className="ml-1 mb-1 block text-sm font-medium tracking-wide text-gray-700"
-                                htmlFor="Password"
+                                htmlFor="senha"
                             >
-                                Password
+                                Senha
                             </label>
                             <input
+                                name="senha"
                                 className="block w-full appearance-none rounded border border-gray-400 bg-white py-3 px-3 leading-tight text-gray-700 focus:outline-none"
                                 type="password"
                                 required
@@ -82,23 +84,19 @@ export default function LoginPage() {
     );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-    const session = await getServerAuthSession({ req, res });
+// export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+//     const session = await getServerAuthSession({ req, res });
 
-    if (session) {
-        return {
-            redirect: {
-                destination: "/",
-                permanent: false,
-            },
-        };
-    }
+//     if (session) {
+//         return {
+//             redirect: {
+//                 destination: "/",
+//                 permanent: false,
+//             },
+//         };
+//     }
 
-    return {
-        props: {},
-    };
-};
-
-export const config = {
-    runtime: 'experimental-edge',
-}
+//     return {
+//         props: {},
+//     };
+// };
