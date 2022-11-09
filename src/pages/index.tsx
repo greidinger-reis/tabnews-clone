@@ -15,7 +15,8 @@ export const getStaticProps: GetStaticProps = async () => {
     await ssg.posts.list.prefetchInfinite({ limit: 15 });
 
     return {
-        props: { dehydratedState: ssg.dehydrate() },
+        props: { trpcState: ssg.dehydrate() },
+        revalidate: 10,
     };
 };
 

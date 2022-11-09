@@ -19,9 +19,9 @@ export function PostList({ userName, recents }: PostListProps) {
         { limit: 15, recents, userName },
         {
             getNextPageParam: (lastPage) => lastPage.nextCursor,
+            refetchOnWindowFocus: false,
             refetchOnMount: false,
             staleTime: Infinity,
-            // initialData,
         }
     );
 
