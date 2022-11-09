@@ -1,5 +1,5 @@
-import { type AppType } from "next/app";
-import { type Session } from "next-auth";
+import type { AppType } from "next/app";
+import type { Session } from "next-auth";
 import { SessionProvider, signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import "../styles/globals.css";
@@ -9,6 +9,7 @@ import classNames from "classnames";
 import Dropdown from "../components/headlessui/Dropdown";
 import { FiChevronDown } from "react-icons/fi";
 import { IoNewspaperOutline } from "react-icons/io5";
+import { FaUserCircle } from "react-icons/fa";
 
 export const HEADER_HEIGHT = "64px";
 
@@ -75,7 +76,7 @@ function Navbar() {
             <div className="text-sm font-medium">
                 {session ? (
                     <div className="flex items-center gap-1">
-                        <span>Olá, {session.user?.name}</span>
+                        <FaUserCircle size={24} />
                         <Dropdown
                             button={
                                 <button>
@@ -85,10 +86,9 @@ function Navbar() {
                         >
                             <ul className="space-y-1 text-zinc-700">
                                 <li className="hover:text-zinc-400">
-                                    <Link href="/perfil/posts">Meus posts</Link>
-                                </li>
-                                <li className="hover:text-zinc-400">
-                                    <Link href="/perfil">Perfil</Link>
+                                    <Link href={`/${session.user?.name}`}>
+                                        {session.user?.name}
+                                    </Link>
                                 </li>
                                 <li className="hover:text-zinc-400">
                                     <button onClick={() => signOut()}>
