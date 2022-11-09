@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { NextAuthProviderButtons } from "~/components/NextauthProviderButtons";
+import { NextAuthProviderButtons } from "~/components/NextAuthProviderButtons";
 
 export default function LoginPage() {
     return (
