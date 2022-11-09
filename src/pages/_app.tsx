@@ -10,6 +10,9 @@ import Dropdown from "../components/headlessui/Dropdown";
 import { FiChevronDown } from "react-icons/fi";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
+import { useEffect } from "react";
+import Head from "next/head";
+import NProgress from "nprogress";
 
 export const HEADER_HEIGHT = "64px";
 
@@ -17,11 +20,41 @@ const MyApp: AppType<{ session: Session | null }> = ({
     Component,
     pageProps: { session, ...pageProps },
 }) => {
+    const router = useRouter();
+
+    NProgress.configure({ showSpinner: false });
+
+    useEffect(() => {
+        function handleChangeStart() {
+            console.log("change start");
+            NProgress.start();
+        }
+
+        function handleChangeComplete() {
+            console.log("change complete");
+            NProgress.done();
+        }
+
+        router.events.on("routeChangeStart", handleChangeStart);
+        router.events.on("routeChangeComplete", handleChangeComplete);
+    }, [router.events]);
+
     return (
-        <SessionProvider session={session}>
-            <Navbar />
-            <Component {...pageProps} />
-        </SessionProvider>
+        <>
+            <Head>
+                <link
+                    rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css"
+                    integrity="sha512-42kB9yDlYiCEfx2xVwq0q7hT4uf26FUgSIZBK8uiaEnTdShXjwr8Ip1V4xGJMg3mHkUt9nNuTDxunHF0/EgxLQ=="
+                    crossOrigin="anonymous"
+                    referrerPolicy="no-referrer"
+                />
+            </Head>
+            <SessionProvider session={session}>
+                <Navbar />
+                <Component {...pageProps} />
+            </SessionProvider>
+        </>
     );
 };
 
