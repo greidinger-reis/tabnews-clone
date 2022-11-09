@@ -1,5 +1,5 @@
 import { signIn } from "next-auth/react";
-import { AiFillGithub, AiOutlineTwitter } from "react-icons/ai";
+import { AiFillGithub } from "react-icons/ai";
 import { FaDiscord } from "react-icons/fa";
 
 export function NextAuthProviderButtons() {
@@ -11,13 +11,6 @@ export function NextAuthProviderButtons() {
                 className="rounded-md border border-zinc-300 bg-gray-100 p-8 py-2 transition-all hover:bg-gray-200"
             >
                 <AiFillGithub className="text-2xl text-zinc-600" />
-            </button>
-            <button
-                type="button"
-                onClick={() => signIn("twitter")}
-                className="rounded-md border border-zinc-300 bg-gray-100 p-8 py-2 transition-all hover:bg-gray-200"
-            >
-                <AiOutlineTwitter className="text-2xl text-zinc-600" />
             </button>
             <button
                 type="button"
