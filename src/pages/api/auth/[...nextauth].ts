@@ -1,3 +1,6 @@
+import { appRouter } from "~/server/trpc/router/_app";
+import { createContextInner } from "./../../../server/trpc/context";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import GithubProvider from "next-auth/providers/github";
@@ -6,22 +9,73 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 import { env } from "../../../env/server.mjs";
 import { prisma } from "../../../server/db/client";
+import Credentials from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
+    session: {
+        strategy: "jwt",
+    },
+
     // Include user.id on session
     callbacks: {
-        session({ session, user }) {
-            if (session.user) {
+        async jwt({ token }) {
+            if (!token.email) return token;
+
+            const user = await prisma.user.findUnique({
+                where: { email: token.email },
+            });
+
+            if (user) {
+                // console.log({
+                //     status: "trying to add user.id to token",
+                //     token,
+                //     user,
+                // });
+                token.id = user.id;
+            }
+
+            // console.log({
+            //     status: "returning token",
+            //     token,
+            //     user,
+            // });
+
+            return token;
+        },
+        async session({ session }) {
+            if (!session.user?.email) return session;
+
+            const user = await prisma.user.findUnique({
+                where: {
+                    email: session.user.email,
+                },
+            });
+
+            if (session.user && user) {
+                // console.log({
+                //     status: "trying to add user.id to session.user",
+                //     session,
+                //     user,
+                // });
                 session.user.id = user.id;
             }
+
+            // console.log({
+            //     status: "returning session",
+            //     session,
+            //     user,
+            // });
+
             return session;
         },
+
         redirect({ baseUrl }) {
             return baseUrl;
         },
     },
     // Configure one or more authentication providers
     adapter: PrismaAdapter(prisma),
+
     providers: [
         DiscordProvider({
             clientId: env.DISCORD_CLIENT_ID,
@@ -31,7 +85,36 @@ export const authOptions: NextAuthOptions = {
             clientId: env.GITHUB_CLIENT_ID,
             clientSecret: env.GITHUB_CLIENT_SECRET,
         }),
-        // ...add more providers here
+        Credentials({
+            name: "Credentials",
+            credentials: {
+                email: {
+                    label: "email",
+                    type: "email",
+                    placeholder: "Email",
+                },
+                password: {
+                    label: "Password",
+                    type: "password",
+                    placeholder: "Password",
+                },
+            },
+            async authorize(credentials) {
+                if (!credentials?.email || !credentials?.password) return null;
+
+                const ssg = await createProxySSGHelpers({
+                    ctx: await createContextInner({ session: null }),
+                    router: appRouter,
+                });
+
+                const user = await ssg.auth.checkCredentials.fetch({
+                    email: credentials.email,
+                    password: credentials.password,
+                });
+
+                return user;
+            },
+        }),
     ],
 };
 

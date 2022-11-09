@@ -1,3 +1,4 @@
+import { authRouter } from "./auth";
 import { commentRouter } from "./comment";
 import { router } from "../trpc";
 import { likeRouter } from "./like";
@@ -7,6 +8,7 @@ export const appRouter = router({
     posts: postRouter,
     likes: likeRouter,
     comments: commentRouter,
+    auth: authRouter,
 });
 
 // export type definition of API

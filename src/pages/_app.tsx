@@ -98,13 +98,7 @@ function Navbar() {
                 {session ? (
                     <div className="flex items-center gap-1">
                         <FaUserCircle size={24} />
-                        <Dropdown
-                            button={
-                                <button>
-                                    <FiChevronDown className="mt-1" />
-                                </button>
-                            }
-                        >
+                        <Dropdown button={<FiChevronDown className="mt-1" />}>
                             <ul className="space-y-1 text-zinc-700">
                                 <li className="hover:text-zinc-400">
                                     <Link href={`/${session.user?.name}`}>
