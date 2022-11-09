@@ -1,23 +1,19 @@
-import { withAuth } from "next-auth/middleware";
 import { type NextRequest, NextResponse } from "next/server";
 
 // if there is a session, redirect to / (home)
-export default withAuth(
-    function middleware(req: NextRequest) {
-        if (req.cookies.has("next-auth.session-token")) {
-            console.log({
-                status: "session exists",
-            });
-            return NextResponse.redirect(new URL("/", req.url));
-        }
+export function middleware(req: NextRequest) {
+    if (req.cookies.has("next-auth.session-token")) {
         console.log({
-            status: "no session",
+            status: "session exists",
+            cookies: req.cookies,
         });
-        return NextResponse.next();
-    },
-    {
-        callbacks: { authorized: () => true },
+        return NextResponse.redirect(new URL("/", req.url));
     }
-);
+    console.log({
+        status: "no session",
+        cookies: req.cookies,
+    });
+    return NextResponse.next();
+}
 
 export const config = { matcher: ["/login"] };
