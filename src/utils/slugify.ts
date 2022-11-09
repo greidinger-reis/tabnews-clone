@@ -1,7 +1,11 @@
-import { PrismaClient } from "@prisma/client";
-import { faker } from "@faker-js/faker";
-
-const prisma = new PrismaClient();
+/* eslint-disable no-useless-escape */
+/* 
+	Create SLUG from a string
+	This function rewrite the string prototype and also 
+	replace latin and other special characters.
+	Forked by Gabriel Froes - https://gist.github.com/gabrielfroes
+	Original Author: Mathew Byrne - https://gist.github.com/mathewbyrne/1280286
+ */
 
 function slugify(text: string) {
     return text
@@ -26,33 +30,4 @@ function slugify(text: string) {
         .replace(/-+$/, ""); // Trim - from end of text
 }
 
-async function main() {
-    console.log("seeding");
-    for (let i = 0; i < 100; i++) {
-        const title = faker.lorem.sentence();
-        const content = faker.lorem.paragraphs();
-        const slug = slugify(title);
-
-        await prisma.post.create({
-            data: {
-                title,
-                content,
-                slug,
-                author: {
-                    connect: {
-                        id: "admin",
-                    },
-                },
-            },
-        });
-    }
-}
-
-main()
-    .catch((e) => {
-        console.log(e);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+export default slugify;

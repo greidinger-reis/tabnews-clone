@@ -8,7 +8,7 @@ interface DropdownProps {
 
 export default function Dropdown(props: DropdownProps) {
     return (
-        <Menu as="div" className="relative inline-block text-left">
+        <Menu as="div" className="relative z-10 inline-block text-left">
             <div>
                 <Menu.Button>{props.button}</Menu.Button>
             </div>
