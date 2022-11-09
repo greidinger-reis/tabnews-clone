@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CgSpinner } from "react-icons/cg";
 import { NextAuthProviderButtons } from "~/components/NextAuthProviderButtons";
-import Spinner from "~/components/Spinner";
 
 interface LoginFormData {
     email: string;
