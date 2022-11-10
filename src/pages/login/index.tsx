@@ -38,8 +38,11 @@ export default function LoginPage() {
             </Head>
             <main className="mt-8 flex flex-col items-center">
                 {error && (
-                    <div className="rounded-md border border-red-200 bg-red-100 p-4">
-                        {error}
+                    <div
+                        className="relative mb-4 flex w-full max-w-xl justify-center rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+                        role="alert"
+                    >
+                        <strong className="font-medium">{error}</strong>
                     </div>
                 )}
                 <form
