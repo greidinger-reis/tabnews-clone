@@ -1,4 +1,3 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcrypt";
 import { z } from "zod";
@@ -43,9 +42,7 @@ export const authRouter = router({
             return {
                 id: user.id,
                 email: user.email,
-                name: user.name,
-                emailVerified: user.emailVerified,
-                image: user.image,
+                username: user.username,
             };
         }),
 
@@ -53,7 +50,7 @@ export const authRouter = router({
         .input(
             z.object({
                 email: z.string(),
-                name: z.string(),
+                username: z.string(),
                 password: z.string(),
             })
         )
@@ -61,21 +58,14 @@ export const authRouter = router({
             try {
                 const user = await ctx.prisma.user.create({
                     data: {
+                        username: input.username,
                         email: input.email,
-                        name: input.name,
                         password: await bcrypt.hash(input.password, 12),
                     },
                 });
                 return user;
             } catch (error) {
-                if (error instanceof PrismaClientKnownRequestError) {
-                    if (error.code === "P2002") {
-                        throw new TRPCError({
-                            code: "BAD_REQUEST",
-                            message: "Email já cadastrado.",
-                        });
-                    }
-                }
+                return error;
             }
         }),
 });

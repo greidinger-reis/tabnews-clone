@@ -32,10 +32,10 @@ export function Post({ post }: { post: PostQueryOutput }) {
 
         if (!result) return;
 
-        post.author.name &&
+        post.author.username &&
             trpcContext.posts.find.invalidate({
                 slug: post.slug,
-                userName: post.author.name,
+                username: post.author.username,
             });
     }
 
@@ -50,10 +50,10 @@ export function Post({ post }: { post: PostQueryOutput }) {
 
         if (!result) return;
 
-        post.author.name &&
+        post.author.username &&
             trpcContext.posts.find.invalidate({
                 slug: post.slug,
-                userName: post.author.name,
+                username: post.author.username,
             });
     }
 
@@ -87,7 +87,7 @@ export function Post({ post }: { post: PostQueryOutput }) {
             <main>
                 <div>
                     <span className="rounded-md bg-[#ddf4ff] px-2 py-1 font-mono text-[12px] text-blue-500">
-                        {post.author.name}
+                        {post.author.username}
                     </span>
                     <span className="ml-2 text-[12px]">
                         {formatDistance(new Date(post.createdAt), new Date(), {

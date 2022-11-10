@@ -25,12 +25,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
     useEffect(() => {
         function handleChangeStart() {
-            console.log("change start");
             NProgress.start();
         }
 
         function handleChangeComplete() {
-            console.log("change complete");
             NProgress.done();
         }
 

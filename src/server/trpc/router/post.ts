@@ -20,7 +20,7 @@ export const postRouter = router({
                     ? {
                           // if userName is provided, filter by it
                           author: {
-                              name: userName,
+                              username: userName,
                           },
                       }
                     : undefined,
@@ -31,7 +31,7 @@ export const postRouter = router({
                       }
                     : undefined,
                 include: {
-                    author: { select: { name: true } },
+                    author: { select: { username: true } },
                     _count: {
                         select: {
                             Comment: true,
@@ -54,15 +54,15 @@ export const postRouter = router({
             };
         }),
     find: publicProcedure
-        .input(z.object({ slug: z.string(), userName: z.string() }))
+        .input(z.object({ slug: z.string(), username: z.string() }))
         .query(async ({ input, ctx }) => {
-            const { slug, userName } = input;
+            const { slug, username } = input;
             return await ctx.prisma.post.findFirstOrThrow({
-                where: { author: { name: userName }, slug },
+                where: { author: { username }, slug },
                 include: {
                     author: {
                         select: {
-                            name: true,
+                            username: true,
                         },
                     },
                     Likes: {

@@ -24,7 +24,7 @@ const cadastroSchema = z.object({
 });
 
 interface CadastroFormData {
-    name: string;
+    username: string;
     email: string;
     password: string;
 }
@@ -83,16 +83,17 @@ export default function CadastroPage() {
                                 className={classNames(
                                     "block w-full appearance-none rounded-md border border-gray-300 py-3 px-3 leading-tight text-gray-700 focus:outline-blue-500",
                                     {
-                                        "border-red-500": formState.errors.name,
+                                        "border-red-500":
+                                            formState.errors.username,
                                     }
                                 )}
                                 type="text"
-                                {...register("name", { required: true })}
+                                {...register("username", { required: true })}
                             />
-                            {formState.errors.name && (
+                            {formState.errors.username && (
                                 <div className="mt-1 flex text-[12px] font-medium text-red-500">
                                     <IoWarning className="text-lg" />
-                                    {formState.errors.name?.message}
+                                    {formState.errors.username?.message}
                                 </div>
                             )}
                         </div>
@@ -163,12 +164,6 @@ export default function CadastroPage() {
                                     <CgSpinner className="absolute right-2 animate-spin text-lg" />
                                 )}
                             </button>
-                        </div>
-                        <div className="relative mt-6 flex w-full items-center justify-center">
-                            <span className="z-10 bg-white px-4 text-xs text-gray-700">
-                                ou entre com
-                            </span>
-                            <div className="absolute h-[.5px] w-[90%] bg-zinc-300" />
                         </div>
                     </div>
                 </form>

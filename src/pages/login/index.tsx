@@ -95,12 +95,6 @@ export default function LoginPage() {
                                 )}
                             </button>
                         </div>
-                        <div className="relative mt-6 flex w-full items-center justify-center">
-                            <span className="z-10 bg-white px-4 text-xs text-gray-700">
-                                ou entre com
-                            </span>
-                            <div className="absolute h-[.5px] w-[90%] bg-zinc-300" />
-                        </div>
                     </div>
                 </form>
             </main>

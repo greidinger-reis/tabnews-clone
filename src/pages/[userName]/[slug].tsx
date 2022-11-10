@@ -5,18 +5,18 @@ import Spinner from "~/components/Spinner";
 import { CommentForm } from "~/components/comments";
 
 interface RouterQuery {
-    userName: string;
+    username: string;
     slug: string;
 }
 
 export default function PostPage() {
     const router = useRouter();
-    const { slug, userName } = router.query as unknown as RouterQuery;
+    const { slug, username } = router.query as unknown as RouterQuery;
 
     const query = trpc.posts.find.useQuery(
-        { slug, userName },
+        { slug, username },
         {
-            enabled: !!slug && !!userName,
+            enabled: !!slug && !!username,
         }
     );
 

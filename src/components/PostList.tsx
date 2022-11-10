@@ -62,7 +62,7 @@ export function PostList({ userName, recents }: PostListProps) {
                             <div className="ml-2">
                                 <Link
                                     className="font-medium hover:underline"
-                                    href={`/${post.author.name}/${post.slug}`}
+                                    href={`/${post.author.username}/${post.slug}`}
                                 >
                                     {post.title}
                                 </Link>
@@ -80,9 +80,9 @@ export function PostList({ userName, recents }: PostListProps) {
                                     ·{" "}
                                     <Link
                                         className="hover:underline"
-                                        href={`/${post.author.name}`}
+                                        href={`/${post.author.username}`}
                                     >
-                                        {post.author.name}
+                                        {post.author.username}
                                     </Link>{" "}
                                     ·{" "}
                                     <span>
