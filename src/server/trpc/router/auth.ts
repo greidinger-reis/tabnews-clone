@@ -1,7 +1,7 @@
 import {TRPCError} from "@trpc/server";
 import bcrypt from "bcrypt";
 import {z} from "zod";
-import {router, publicProcedure} from "./../trpc";
+import {publicProcedure, router} from "./../trpc";
 import {sendConfirmationEmail} from "~/server/nodemailer";
 
 export const authRouter = router({

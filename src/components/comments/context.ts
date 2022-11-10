@@ -1,5 +1,5 @@
-import { createContext } from "react";
-import { type CommandController } from "react-mde";
+import {createContext} from "react";
+import {type CommandController} from "react-mde";
 
 interface ICommentFormContext {
     commandController: CommandController<string>;

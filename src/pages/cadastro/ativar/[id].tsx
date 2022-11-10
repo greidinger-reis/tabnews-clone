@@ -7,7 +7,6 @@ import {PrismaClient} from "@prisma/client";
 import z from "zod";
 import {useRouter} from "next/router";
 import {useEffect} from "react";
-import {HEADER_HEIGHT} from "~/pages/_app";
 import classNames from "classnames";
 
 export const getServerSideProps: GetServerSideProps<{ confirmed: boolean }> = async (context: GetServerSidePropsContext) => {

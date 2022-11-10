@@ -1,4 +1,4 @@
-import { type NextRequest, NextResponse } from "next/server";
+import {type NextRequest, NextResponse} from "next/server";
 
 // if there is a session, redirect to / (home)
 export function middleware(req: NextRequest) {
@@ -19,4 +19,4 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
 }
 
-export const config = { matcher: ["/login"] };
+export const config = {matcher: ["/login"]};

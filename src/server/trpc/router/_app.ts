@@ -1,8 +1,8 @@
-import { authRouter } from "./auth";
-import { commentRouter } from "./comment";
-import { router } from "../trpc";
-import { likeRouter } from "./like";
-import { postRouter } from "./post";
+import {authRouter} from "./auth";
+import {commentRouter} from "./comment";
+import {router} from "../trpc";
+import {likeRouter} from "./like";
+import {postRouter} from "./post";
 
 export const appRouter = router({
     posts: postRouter,

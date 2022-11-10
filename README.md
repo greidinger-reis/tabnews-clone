@@ -1,19 +1,24 @@
 # Create T3 App
 
-This is an app bootstrapped according to the [init.tips](https://init.tips) stack, also known as the T3-Stack.
+This is an app bootstrapped according to the [init.tips](https://init.tips)
+stack, also known as the T3-Stack.
 
 ## What's next? How do I make an app with this?
 
-We try to keep this project as simple as possible, so you can start with the most basic configuration and then move on to more advanced configuration.
+We try to keep this project as simple as possible, so you can start with the
+most basic configuration and then move on to more advanced configuration.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+If you are not familiar with the different technologies used in this project,
+please refer to the respective docs. If you still are in the wind, please join
+our [Discord](https://t3.gg/discord) and ask for help.
 
 - [Next-Auth.js](https://next-auth.js.org)
 - [Prisma](https://prisma.io)
 - [TailwindCSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
 
-We also [roll our own docs](https://beta.create.t3.gg) with some summary information and links to the respective documentation.
+We also [roll our own docs](https://beta.create.t3.gg) with some summary
+information and links to the respective documentation.
 
 Also checkout these awesome tutorials on `create-t3-app`.
 
@@ -24,4 +29,7 @@ Also checkout these awesome tutorials on `create-t3-app`.
 
 ## How do I deploy this?
 
-Follow our deployment guides for [Vercel](https://beta.create.t3.gg/en/deployment/vercel) and [Docker](https://beta.create.t3.gg/en/deployment/docker) for more information.
+Follow our deployment guides
+for [Vercel](https://beta.create.t3.gg/en/deployment/vercel)
+and [Docker](https://beta.create.t3.gg/en/deployment/docker) for more
+information.

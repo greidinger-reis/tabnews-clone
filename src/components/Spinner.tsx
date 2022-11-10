@@ -1,5 +1,5 @@
-import { CgSpinner } from "react-icons/cg";
+import {CgSpinner} from "react-icons/cg";
 
 export default function Spinner() {
-    return <CgSpinner className="animate-spin text-2xl text-blue-500" />;
+    return <CgSpinner className="animate-spin text-2xl text-blue-500"/>;
 }

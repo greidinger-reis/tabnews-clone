@@ -1,22 +1,23 @@
 import Spinner from "~/components/Spinner";
 import Link from "next/link";
-import { formatDistance } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { useEffect, useRef } from "react";
-import { useIsIntersecting } from "~/hooks/useIsIntersecting";
-import { trpc } from "~/utils/trpc";
+import {formatDistance} from "date-fns";
+import {ptBR} from "date-fns/locale";
+import {useEffect, useRef} from "react";
+import {useIsIntersecting} from "~/hooks/useIsIntersecting";
+import {trpc} from "~/utils/trpc";
 
 interface PostListProps {
     recents?: boolean;
     userName?: string;
 }
-export function PostList({ userName, recents }: PostListProps) {
+
+export function PostList({userName, recents}: PostListProps) {
     const postScoreMap = new Map<string, number>();
 
     const [isLoadMoreVisible, ref] = useIsIntersecting<HTMLDivElement>();
 
     const query = trpc.posts.list.useInfiniteQuery(
-        { limit: 15, recents, userName },
+        {limit: 15, recents, userName},
         {
             getNextPageParam: (lastPage) => lastPage.nextCursor,
             refetchOnWindowFocus: false,
@@ -35,7 +36,8 @@ export function PostList({ userName, recents }: PostListProps) {
     }, [isLoadMoreVisible, query.hasNextPage, query.isFetching]);
 
     return (
-        <div className="container mx-auto flex max-w-[1012px] flex-col px-4 py-4 sm:py-6 sm:px-8">
+        <div
+            className="container mx-auto flex max-w-[1012px] flex-col px-4 py-4 sm:py-6 sm:px-8">
             {userName ? (
                 <h1 className="mb-4 border-b border-zinc-300 pb-4 text-3xl font-bold">
                     {userName}
@@ -89,7 +91,7 @@ export function PostList({ userName, recents }: PostListProps) {
                                         {formatDistance(
                                             new Date(post.createdAt),
                                             new Date(),
-                                            { locale: ptBR }
+                                            {locale: ptBR}
                                         )}{" "}
                                         atrás
                                     </span>
@@ -101,8 +103,9 @@ export function PostList({ userName, recents }: PostListProps) {
             )}
             <div ref={ref}>
                 {query.isFetchingNextPage && (
-                    <div className="flex w-full items-center justify-center p-8">
-                        <Spinner />
+                    <div
+                        className="flex w-full items-center justify-center p-8">
+                        <Spinner/>
                     </div>
                 )}
             </div>

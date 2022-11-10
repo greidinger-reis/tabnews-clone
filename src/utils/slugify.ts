@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-escape */
-/* 
+
+/*
 	Create SLUG from a string
 	This function rewrite the string prototype and also 
 	replace latin and other special characters.

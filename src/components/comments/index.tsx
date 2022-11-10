@@ -1,9 +1,11 @@
 import classNames from "classnames";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
 import {
     boldCommand,
     checkedListCommand,
+    codeBlockCommand,
+    codeCommand,
     headingLevel2Command,
     headingLevel3Command,
     headingLevel4Command,
@@ -14,24 +16,22 @@ import {
     strikethroughCommand,
     unorderedListCommand,
     useTextAreaMarkdownEditor,
-    codeBlockCommand,
-    codeCommand,
 } from "react-mde";
-import { trpc } from "../../utils/trpc";
+import {trpc} from "../../utils/trpc";
 import CommentFormButtons from "./CommentEditorButtons";
-import { CommentFormContext } from "./context";
+import {CommentFormContext} from "./context";
 
 export function CommentForm({
-    postId,
-    parentId,
-    setIsReplying,
-}: {
+                                postId,
+                                parentId,
+                                setIsReplying,
+                            }: {
     postId: string;
     parentId?: string;
     setIsReplying?: (value: boolean) => void;
 }) {
     const [comment, setComment] = useState("");
-    const { ref, commandController } = useTextAreaMarkdownEditor({
+    const {ref, commandController} = useTextAreaMarkdownEditor({
         commandMap: {
             h2: headingLevel2Command,
             h3: headingLevel3Command,
@@ -49,34 +49,34 @@ export function CommentForm({
         },
     });
     const [editorButtonsShown, setEditorButtonsShown] = useState(false);
-    const { register, handleSubmit, reset, setValue } = useForm<{
+    const {register, handleSubmit, reset, setValue} = useForm<{
         content: string;
     }>();
     const trpcContext = trpc.useContext();
 
     //TODO: Add state transition
-    const { mutate } = trpc.comments.create.useMutation({
+    const {mutate} = trpc.comments.create.useMutation({
         onSuccess: () => {
             setComment("");
             setIsReplying && setIsReplying(false);
             reset();
-            trpcContext.comments.list.invalidate({ postId });
+            trpcContext.comments.list.invalidate({postId});
         },
     });
 
     async function submitComment(data: { content: string }) {
-        const { content } = data;
-        mutate({ postId, parentId, content });
+        const {content} = data;
+        mutate({postId, parentId, content});
     }
 
     useEffect(() => {
-        register("content", { required: true });
+        register("content", {required: true});
     });
 
     return (
-        <CommentFormContext.Provider value={{ commandController }}>
+        <CommentFormContext.Provider value={{commandController}}>
             <div className="group flex flex-col rounded">
-                {editorButtonsShown ? <CommentFormButtons /> : null}
+                {editorButtonsShown ? <CommentFormButtons/> : null}
                 <form
                     onSubmit={handleSubmit(submitComment)}
                     className="flex flex-col gap-4"

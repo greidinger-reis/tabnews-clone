@@ -2,7 +2,6 @@ import Nodemailer from "nodemailer";
 import {env} from "~/env/server.mjs";
 import type {User} from "@prisma/client";
 import {getBaseUrl} from "~/utils/trpc";
-import type {SentMessageInfo} from "nodemailer/lib/smtp-transport";
 
 const transporter = Nodemailer.createTransport({
     service: "gmail",

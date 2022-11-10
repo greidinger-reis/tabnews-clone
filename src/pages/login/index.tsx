@@ -1,10 +1,10 @@
 import classNames from "classnames";
-import { signIn } from "next-auth/react";
+import {signIn} from "next-auth/react";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { CgSpinner } from "react-icons/cg";
+import {useRouter} from "next/router";
+import {useState} from "react";
+import {useForm} from "react-hook-form";
+import {CgSpinner} from "react-icons/cg";
 
 interface LoginFormData {
     email: string;
@@ -15,7 +15,7 @@ export default function LoginPage() {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    const { register, handleSubmit } = useForm<LoginFormData>();
+    const {register, handleSubmit} = useForm<LoginFormData>();
 
     async function onSubmit(data: LoginFormData) {
         setIsLoading(true);
@@ -62,7 +62,7 @@ export default function LoginPage() {
                             <input
                                 className="block w-full appearance-none rounded-md border border-gray-300 py-3 px-3 leading-tight text-gray-700 focus:outline-none"
                                 type="email"
-                                {...register("email", { required: true })}
+                                {...register("email", {required: true})}
                             />
                         </div>
                         <div className="mb-6 w-full px-3 md:w-full">
@@ -75,7 +75,7 @@ export default function LoginPage() {
                             <input
                                 className="block w-full appearance-none rounded-md border border-gray-300 py-3 px-3 leading-tight text-gray-700 focus:outline-none"
                                 type="password"
-                                {...register("password", { required: true })}
+                                {...register("password", {required: true})}
                             />
                         </div>
                         <div className="w-full px-3 md:w-full">
@@ -85,13 +85,14 @@ export default function LoginPage() {
                                     "btn-green relative w-full font-medium text-white",
                                     {
                                         "cursor-not-allowed bg-green-700":
-                                            isLoading,
+                                        isLoading,
                                     }
                                 )}
                             >
                                 Login
                                 {isLoading && (
-                                    <CgSpinner className="absolute right-2 animate-spin text-lg" />
+                                    <CgSpinner
+                                        className="absolute right-2 animate-spin text-lg"/>
                                 )}
                             </button>
                         </div>

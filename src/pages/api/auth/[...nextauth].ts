@@ -1,11 +1,11 @@
-import { appRouter } from "~/server/trpc/router/_app";
-import { createContextInner } from "./../../../server/trpc/context";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import {appRouter} from "~/server/trpc/router/_app";
+import {createContextInner} from "./../../../server/trpc/context";
+import {createProxySSGHelpers} from "@trpc/react-query/ssg";
+import NextAuth, {type NextAuthOptions} from "next-auth";
 // Prisma adapter for NextAuth, optional and can be removed
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import {PrismaAdapter} from "@next-auth/prisma-adapter";
 
-import { prisma } from "../../../server/db/client";
+import {prisma} from "../../../server/db/client";
 import Credentials from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
@@ -15,11 +15,11 @@ export const authOptions: NextAuthOptions = {
 
     // Include user.id on session
     callbacks: {
-        async jwt({ token }) {
+        async jwt({token}) {
             if (!token.email) return token;
 
             const user = await prisma.user.findUnique({
-                where: { email: token.email },
+                where: {email: token.email},
             });
 
             if (user) {
@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
 
             return token;
         },
-        async session({ session }) {
+        async session({session}) {
             if (!session.user?.email) return session;
 
             const user = await prisma.user.findUnique({
@@ -67,7 +67,7 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
 
-        redirect({ baseUrl }) {
+        redirect({baseUrl}) {
             return baseUrl;
         },
     },
@@ -93,7 +93,7 @@ export const authOptions: NextAuthOptions = {
                 if (!credentials?.email || !credentials?.password) return null;
 
                 const ssg = await createProxySSGHelpers({
-                    ctx: await createContextInner({ session: null }),
+                    ctx: await createContextInner({session: null}),
                     router: appRouter,
                 });
 

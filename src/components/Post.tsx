@@ -1,16 +1,16 @@
-import type { Outputs } from "~/types/trpc";
-import { formatDistance } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import type {Outputs} from "~/types/trpc";
+import {formatDistance} from "date-fns";
+import {ptBR} from "date-fns/locale";
 import Markdown from "markdown-to-jsx";
-import { BsChevronDown, BsChevronUp } from "react-icons/bs";
-import { trpc } from "~/utils/trpc";
-import { useSession } from "next-auth/react";
+import {BsChevronDown, BsChevronUp} from "react-icons/bs";
+import {trpc} from "~/utils/trpc";
+import {useSession} from "next-auth/react";
 import classNames from "classnames";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 
 type PostQueryOutput = Outputs["posts"]["find"];
 
-export function Post({ post }: { post: PostQueryOutput }) {
+export function Post({post}: { post: PostQueryOutput }) {
     const session = useSession();
     const router = useRouter();
     const trpcContext = trpc.useContext();
@@ -28,15 +28,15 @@ export function Post({ post }: { post: PostQueryOutput }) {
         }
         if (userHasLiked) return;
 
-        const result = await addLike.mutateAsync({ postId: post.id });
+        const result = await addLike.mutateAsync({postId: post.id});
 
         if (!result) return;
 
         post.author.username &&
-            trpcContext.posts.find.invalidate({
-                slug: post.slug,
-                username: post.author.username,
-            });
+        trpcContext.posts.find.invalidate({
+            slug: post.slug,
+            username: post.author.username,
+        });
     }
 
     async function handleRemoveLike() {
@@ -46,19 +46,20 @@ export function Post({ post }: { post: PostQueryOutput }) {
         }
         if (!userHasLiked) return;
 
-        const result = await removeLike.mutateAsync({ postId: post.id });
+        const result = await removeLike.mutateAsync({postId: post.id});
 
         if (!result) return;
 
         post.author.username &&
-            trpcContext.posts.find.invalidate({
-                slug: post.slug,
-                username: post.author.username,
-            });
+        trpcContext.posts.find.invalidate({
+            slug: post.slug,
+            username: post.author.username,
+        });
     }
 
     return (
-        <div className="prose mx-auto mt-4 flex sm:w-3/4 sm:max-w-none lg:w-1/2">
+        <div
+            className="prose mx-auto mt-4 flex sm:w-3/4 sm:max-w-none lg:w-1/2">
             <aside className="flex flex-col items-center px-1 pt-4 sm:px-4">
                 <div className="flex flex-col items-center gap-1">
                     <button
@@ -70,7 +71,7 @@ export function Post({ post }: { post: PostQueryOutput }) {
                         )}
                         onClick={handleAddLike}
                     >
-                        <BsChevronUp className="text-sm" />
+                        <BsChevronUp className="text-sm"/>
                     </button>
                     <span className="text-[12px] font-medium text-blue-500">
                         {post._count.Likes}
@@ -79,14 +80,15 @@ export function Post({ post }: { post: PostQueryOutput }) {
                         className="rounded-lg p-2 hover:bg-[#ddf4ff]/50"
                         onClick={handleRemoveLike}
                     >
-                        <BsChevronDown className="text-sm" />
+                        <BsChevronDown className="text-sm"/>
                     </button>
                 </div>
                 <div className="h-full border-l border-dotted"></div>
             </aside>
             <main>
                 <div>
-                    <span className="rounded-md bg-[#ddf4ff] px-2 py-1 font-mono text-[12px] text-blue-500">
+                    <span
+                        className="rounded-md bg-[#ddf4ff] px-2 py-1 font-mono text-[12px] text-blue-500">
                         {post.author.username}
                     </span>
                     <span className="ml-2 text-[12px]">

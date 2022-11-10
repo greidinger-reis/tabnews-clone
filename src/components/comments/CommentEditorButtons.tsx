@@ -2,29 +2,29 @@ import {
     BsCode,
     BsCodeSlash,
     BsLink45Deg,
-    BsListUl,
     BsListCheck,
     BsListOl,
+    BsListUl,
     BsTypeBold,
-    BsTypeH3,
     BsTypeH2,
+    BsTypeH3,
     BsTypeItalic,
     BsTypeStrikethrough,
 } from "react-icons/bs";
-import { GrBlockQuote } from "react-icons/gr";
-import { type ReactNode, useContext } from "react";
-import { CommentFormContext } from "./context";
+import {GrBlockQuote} from "react-icons/gr";
+import {type ReactNode, useContext} from "react";
+import {CommentFormContext} from "./context";
 
 const CommentFormButton = ({
-    children,
-    command,
-    isBlockCodeCommand,
-}: {
+                               children,
+                               command,
+                               isBlockCodeCommand,
+                           }: {
     children: ReactNode;
     command: string;
     isBlockCodeCommand?: boolean;
 }) => {
-    const { commandController } = useContext(CommentFormContext);
+    const {commandController} = useContext(CommentFormContext);
 
     return (
         <button
@@ -46,42 +46,43 @@ const CommentFormButton = ({
 
 const CommentFormButtons = () => {
     return (
-        <div className="flex gap-1 overflow-x-scroll rounded-t border border-b-0 border-zinc-400 bg-white p-1 group-focus-within:border-blue-500 dark:border-zinc-700 dark:bg-zinc-800 sm:overflow-x-auto">
+        <div
+            className="flex gap-1 overflow-x-scroll rounded-t border border-b-0 border-zinc-400 bg-white p-1 group-focus-within:border-blue-500 dark:border-zinc-700 dark:bg-zinc-800 sm:overflow-x-auto">
             <CommentFormButton command="h2">
-                <BsTypeH2 size={24} />
+                <BsTypeH2 size={24}/>
             </CommentFormButton>
             <CommentFormButton command="h3">
-                <BsTypeH3 size={24} />
+                <BsTypeH3 size={24}/>
             </CommentFormButton>
             <CommentFormButton command="bold">
-                <BsTypeBold size={24} />
+                <BsTypeBold size={24}/>
             </CommentFormButton>
             <CommentFormButton command="italic">
-                <BsTypeItalic size={24} />
+                <BsTypeItalic size={24}/>
             </CommentFormButton>
             <CommentFormButton command="strikethrough">
-                <BsTypeStrikethrough size={24} />
+                <BsTypeStrikethrough size={24}/>
             </CommentFormButton>
             <CommentFormButton command="link">
-                <BsLink45Deg size={24} />
+                <BsLink45Deg size={24}/>
             </CommentFormButton>
             <CommentFormButton command="quote">
-                <GrBlockQuote size={24} />
+                <GrBlockQuote size={24}/>
             </CommentFormButton>
             <CommentFormButton command="orderedList">
-                <BsListOl size={24} />
+                <BsListOl size={24}/>
             </CommentFormButton>
             <CommentFormButton command="unorderedList">
-                <BsListUl size={24} />
+                <BsListUl size={24}/>
             </CommentFormButton>
             <CommentFormButton command="checkedList">
-                <BsListCheck size={24} />
+                <BsListCheck size={24}/>
             </CommentFormButton>
             <CommentFormButton command="code">
-                <BsCode size={24} />
+                <BsCode size={24}/>
             </CommentFormButton>
             <CommentFormButton command="codeBlock" isBlockCodeCommand={true}>
-                <BsCodeSlash size={24} />
+                <BsCodeSlash size={24}/>
             </CommentFormButton>
         </div>
     );

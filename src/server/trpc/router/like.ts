@@ -1,12 +1,12 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import {TRPCError} from "@trpc/server";
+import {z} from "zod";
+import {protectedProcedure, router} from "../trpc";
 
 export const likeRouter = router({
     add: protectedProcedure
-        .input(z.object({ postId: z.string() }))
-        .mutation(async ({ input, ctx }) => {
-            const { postId } = input;
+        .input(z.object({postId: z.string()}))
+        .mutation(async ({input, ctx}) => {
+            const {postId} = input;
             const userId = ctx.session.user.id;
             const like = await ctx.prisma.like.findFirst({
                 where: {
@@ -26,9 +26,9 @@ export const likeRouter = router({
         }),
 
     remove: protectedProcedure
-        .input(z.object({ postId: z.string() }))
-        .mutation(async ({ input, ctx }) => {
-            const { postId } = input;
+        .input(z.object({postId: z.string()}))
+        .mutation(async ({input, ctx}) => {
+            const {postId} = input;
             const userId = ctx.session.user.id;
             const like = await ctx.prisma.like.findFirst({
                 where: {

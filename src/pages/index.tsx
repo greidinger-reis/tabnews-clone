@@ -4,7 +4,6 @@ import {appRouter} from "~/server/trpc/router/_app";
 import {createContextInner} from "~/server/trpc/context";
 import superjson from "superjson";
 import {PostList} from "~/components/PostList";
-import {trpc} from "~/utils/trpc";
 
 export const getStaticProps: GetStaticProps = async () => {
     const ssg = createProxySSGHelpers({

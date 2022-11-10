@@ -1,6 +1,6 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { router, protectedProcedure, publicProcedure } from "./../trpc";
+import {TRPCError} from "@trpc/server";
+import {z} from "zod";
+import {protectedProcedure, publicProcedure, router} from "./../trpc";
 
 export const commentRouter = router({
     list: publicProcedure
@@ -9,8 +9,8 @@ export const commentRouter = router({
                 postId: z.string(),
             })
         )
-        .query(({ input, ctx }) => {
-            const { postId } = input;
+        .query(({input, ctx}) => {
+            const {postId} = input;
             return ctx.prisma.comment
                 .findMany({
                     where: {
@@ -19,8 +19,8 @@ export const commentRouter = router({
                         },
                     },
                     include: {
-                        author: { select: { username: true } },
-                        _count: { select: { likes: true } },
+                        author: {select: {username: true}},
+                        _count: {select: {likes: true}},
                     },
                 })
                 .catch((err) => {
@@ -39,8 +39,8 @@ export const commentRouter = router({
                 content: z.string(),
             })
         )
-        .mutation(async ({ input, ctx }) => {
-            const { postId, parentId, content } = input;
+        .mutation(async ({input, ctx}) => {
+            const {postId, parentId, content} = input;
             const authorId = ctx.session.user.id;
 
             return await ctx.prisma.comment
@@ -79,8 +79,8 @@ export const commentRouter = router({
                 commentId: z.string(),
             })
         )
-        .mutation(async ({ ctx, input }) => {
-            const { commentId } = input;
+        .mutation(async ({ctx, input}) => {
+            const {commentId} = input;
             return await ctx.prisma.comment
                 .delete({
                     where: {
