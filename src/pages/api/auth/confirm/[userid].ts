@@ -8,6 +8,8 @@ export default async function handleEmailConfirmation(req: NextApiRequest, res: 
     if (!id) return res.status(400).json({message: "Invalid user id"});
 
     try {
+        console.log("Confirming user with id", id);
+        console.log("Prisma?", prisma);
         await prisma?.user.update({
             where: {
                 id
@@ -16,6 +18,7 @@ export default async function handleEmailConfirmation(req: NextApiRequest, res: 
                 activated: true
             }
         })
+        console.log("User confirmed");
         return res.status(200).json({message: "Usuário confirmado com sucesso"});
 
     } catch (e) {
