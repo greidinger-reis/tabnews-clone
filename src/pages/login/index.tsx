@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CgSpinner } from "react-icons/cg";
-import { NextAuthProviderButtons } from "~/components/NextAuthProviderButtons";
 
 interface LoginFormData {
     email: string;
@@ -102,7 +101,6 @@ export default function LoginPage() {
                             </span>
                             <div className="absolute h-[.5px] w-[90%] bg-zinc-300" />
                         </div>
-                        <NextAuthProviderButtons />
                     </div>
                 </form>
             </main>

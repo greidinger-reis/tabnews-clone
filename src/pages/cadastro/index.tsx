@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { NextAuthProviderButtons } from "~/components/NextAuthProviderButtons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IoWarning } from "react-icons/io5";
 import classNames from "classnames";
@@ -171,7 +170,6 @@ export default function CadastroPage() {
                             </span>
                             <div className="absolute h-[.5px] w-[90%] bg-zinc-300" />
                         </div>
-                        <NextAuthProviderButtons />
                     </div>
                 </form>
             </main>
