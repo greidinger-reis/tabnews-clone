@@ -1,7 +1,6 @@
 import Nodemailer from "nodemailer";
 import {env} from "~/env/server.mjs";
 import type {User} from "@prisma/client";
-import {getBaseUrl} from "~/utils/trpc";
 
 const transporter = Nodemailer.createTransport({
     service: "gmail",
@@ -15,11 +14,10 @@ export async function sendConfirmationEmail(user: User): Promise<{ ok: boolean; 
     let ok = false;
     let error: Error | null = null;
 
-    const activationURL = `${getBaseUrl()}/cadastro/ativar/${user.id}`
+    const activationURL = `https://tabnews-clone.vercel.app/cadastro/ativar/${user.id}`
 
     console.log({
         status: "Sending confirmation email",
-        activationURL,
     })
 
     transporter.sendMail(
@@ -46,6 +44,10 @@ export async function sendConfirmationEmail(user: User): Promise<{ ok: boolean; 
             }
         }
     );
+
+    console.log({
+        status: "Confirmation email sent",
+    })
 
     return {
         ok,
