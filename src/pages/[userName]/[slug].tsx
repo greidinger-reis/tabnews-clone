@@ -19,13 +19,7 @@ export default function PostPage() {
             enabled: !!slug && !!userName,
         }
     );
-
-    console.log({
-        slug,
-        userName,
-        data: query.data
-    });
-
+    
     return (
         <div>
             {query.isLoading && (
