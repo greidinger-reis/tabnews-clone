@@ -6,15 +6,15 @@ import Nodemailer from "nodemailer";
 import {env} from "~/env/server.mjs";
 import type {User} from "@prisma/client";
 
-const transporter = Nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: env.GMAIL_USER,
-        pass: env.GMAIL_PASSWORD,
-    },
-});
-
 async function sendConfirmationEmail(user: User): Promise<{ ok: boolean; error: Error | null }> {
+    const transporter = Nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: env.GMAIL_USER,
+            pass: env.GMAIL_PASSWORD,
+        },
+    });
+
     let ok = false;
     let error: Error | null = null;
 
@@ -48,11 +48,7 @@ async function sendConfirmationEmail(user: User): Promise<{ ok: boolean; error: 
             }
         }
     );
-
-    console.log({
-        status: "Confirmation email sent",
-    })
-
+    
     return {
         ok,
         error,
