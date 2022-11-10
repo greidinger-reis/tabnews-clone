@@ -10,7 +10,7 @@ const transporter = Nodemailer.createTransport({
     },
 });
 
-async function sendConfirmationEmail(
+export async function sendConfirmationEmail(
     user: User
 ): Promise<{ ok: boolean; error: Error | null }> {
     const activationURL = `https://tabnews-clone.vercel.app/cadastro/ativar/${user.id}`;

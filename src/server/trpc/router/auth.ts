@@ -1,11 +1,8 @@
-import {TRPCError} from "@trpc/server";
+import { TRPCError } from "@trpc/server";
 import bcrypt from "bcrypt";
-import {z} from "zod";
-import {publicProcedure, router} from "./../trpc";
-import Nodemailer from "nodemailer";
-import {env} from "~/env/server.mjs";
-import type {User} from "@prisma/client";
-
+import { z } from "zod";
+import { publicProcedure, router } from "./../trpc";
+import { sendConfirmationEmail } from "~/server/nodemailer";
 
 export const authRouter = router({
     checkCredentials: publicProcedure
@@ -15,7 +12,7 @@ export const authRouter = router({
                 password: z.string(),
             })
         )
-        .query(async ({ctx, input}) => {
+        .query(async ({ ctx, input }) => {
             const user = await ctx.prisma.user.findUnique({
                 where: {
                     email: input.email,
@@ -58,7 +55,7 @@ export const authRouter = router({
                 password: z.string(),
             })
         )
-        .mutation(async ({ctx, input}) => {
+        .mutation(async ({ ctx, input }) => {
             const user = await ctx.prisma.user.create({
                 data: {
                     username: input.username,
@@ -76,11 +73,11 @@ export const authRouter = router({
 
             const res = await sendConfirmationEmail(user);
 
-            return {...res, email: user.email};
+            return { ...res, email: user.email };
         }),
     confirmEmail: publicProcedure
-        .input(z.object({id: z.string()}))
-        .mutation(async ({ctx, input}) => {
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
             const user = await ctx.prisma.user.update({
                 where: {
                     id: input.id,
@@ -96,6 +93,6 @@ export const authRouter = router({
                         "Usuário não encontrado para confirmação de email.",
                 });
             }
-            return {ok: true};
+            return { ok: true };
         }),
 });
