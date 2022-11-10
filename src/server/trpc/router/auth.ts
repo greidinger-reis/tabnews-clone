@@ -2,7 +2,7 @@ import {TRPCError} from "@trpc/server";
 import bcrypt from "bcrypt";
 import {z} from "zod";
 import {router, publicProcedure} from "./../trpc";
-import {sendConfirmationEmail} from "~/server/nodemailer/send-confirmation";
+import {sendConfirmationEmail} from "~/server/nodemailer";
 
 export const authRouter = router({
     checkCredentials: publicProcedure
@@ -63,14 +63,17 @@ export const authRouter = router({
                     password: await bcrypt.hash(input.password, 12),
                 },
             });
+
             if (!user) {
                 throw new TRPCError({
                     code: "BAD_REQUEST",
                     message: "Não foi possível criar o usuário.",
                 });
             }
-            sendConfirmationEmail(user);
-            return {ok: true, email: user.email};
+
+            const res = await sendConfirmationEmail(user);
+
+            return {...res, email: user.email};
         }),
     confirmEmail: publicProcedure
         .input(z.object({id: z.string()}))
