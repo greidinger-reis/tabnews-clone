@@ -55,6 +55,7 @@ export const authOptions: NextAuthOptions = {
                 //     user,
                 // });
                 session.user.id = user.id;
+                session.user.name = user.username;
             }
 
             // console.log({

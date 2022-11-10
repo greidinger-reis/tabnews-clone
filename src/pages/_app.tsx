@@ -108,6 +108,13 @@ function Navbar() {
                                         Sair
                                     </button>
                                 </li>
+                                {/* <li>
+                                    <button
+                                        onClick={() => console.log(session)}
+                                    >
+                                        log
+                                    </button>
+                                </li> */}
                             </ul>
                         </Dropdown>
                     </div>

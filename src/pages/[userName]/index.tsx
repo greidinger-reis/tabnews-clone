@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 export default function UserPostListPage() {
     const router = useRouter();
-    const { userName } = router.query;
+    const { username } = router.query;
 
-    return <PostList userName={userName as string} />;
+    return <PostList userName={username as string} />;
 }
