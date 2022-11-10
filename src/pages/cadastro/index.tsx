@@ -12,15 +12,16 @@ import {Outputs} from "~/types/trpc";
 const cadastroSchema = z.object({
     username: z
         .string()
-        .min(3, "Nome deve conter no mínimo 3 caracteres")
-        .max(100, "Nome deve conter no máximo 100 caracteres"),
-    email: z.string().email("Seu email deve ser válido"),
+        .min(3, "\"username\" deve conter no mínimo 3 caracteres")
+        .max(100, "\"username\" deve conter no máximo 100 caracteres")
+        .regex(/^[a-zA-Z0-9_]+$/, "\"username\" deve conter apenas letras, números e _"),
+    email: z.string().email("\"email\" deve ser válido"),
     // password must contain at least one uppercase letter, one digit, one special caracter, and be at least 8 characters long
     password: z
         .string()
         .regex(
             /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
-            "A senha deve conter pelo menos uma letra maiúscula, um dígito, um caractere especial e ter pelo menos 8 caracteres"
+            "\"senha\" deve conter pelo menos uma letra maiúscula, um dígito, um caractere especial e ter pelo menos 8 caracteres"
         ),
 });
 
