@@ -61,11 +61,12 @@ model Comment {
 }
 
 model User {
-    id       String    @id @default(cuid())
-    username String?   @unique
-    email    String?   @unique
-    password String?
-    Post     Post[]
-    Comment  Comment[]
-    Likes    Like[]
+    id        String    @id @default(cuid())
+    username  String    @unique
+    email     String    @unique
+    password  String
+    activated Boolean   @default(false)
+    Post      Post[]
+    Comment   Comment[]
+    Likes     Like[]
 }

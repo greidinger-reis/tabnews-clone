@@ -2,6 +2,38 @@ import { TRPCError } from "@trpc/server";
 import bcrypt from "bcrypt";
 import { z } from "zod";
 import { router, publicProcedure } from "./../trpc";
+import Nodemailer from "nodemailer";
+import { env } from "~/env/server.mjs";
+import type { User } from "@prisma/client";
+import { getBaseUrl } from "~/utils/trpc";
+
+export function sendConfirmationEmail(user: User) {
+    const transporter = Nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: env.GMAIL_USER,
+            pass: env.GMAIL_PASSWORD,
+        },
+    });
+    transporter.sendMail(
+        {
+            from: env.GMAIL_USER,
+            to: user.email,
+            subject: "TabNews Clone - Ative sua conta",
+            html: `<h1>Olá, ${user.username}</h1>
+            <p>Para ativar sua conta, clique no botão abaixo:</p>
+            <a href="${getBaseUrl()}/auth/confirm/${user.id}">Ativar conta</a>
+            `,
+        },
+        (err, info) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(info);
+            }
+        }
+    );
+}
 
 export const authRouter = router({
     checkCredentials: publicProcedure
@@ -63,6 +95,7 @@ export const authRouter = router({
                         password: await bcrypt.hash(input.password, 12),
                     },
                 });
+                sendConfirmationEmail(user);
                 return user;
             } catch (error) {
                 return error;

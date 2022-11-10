@@ -9,7 +9,7 @@ import { useState } from "react";
 import { trpc } from "~/utils/trpc";
 
 const cadastroSchema = z.object({
-    name: z
+    username: z
         .string()
         .min(3, "Nome deve conter no mínimo 3 caracteres")
         .max(100, "Nome deve conter no máximo 100 caracteres"),
@@ -32,6 +32,7 @@ interface CadastroFormData {
 export default function CadastroPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [res, setRes] = useState<unknown>();
     const { register, handleSubmit, formState } = useForm<CadastroFormData>({
         resolver: zodResolver(cadastroSchema),
         criteriaMode: "all",
@@ -44,7 +45,8 @@ export default function CadastroPage() {
         setError(null);
         setIsLoading(true);
         try {
-            await createUser(data);
+            const res = await createUser(data);
+            setRes(res);
         } finally {
             setIsLoading(false);
         }
