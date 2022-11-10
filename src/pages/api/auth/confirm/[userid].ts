@@ -1,5 +1,8 @@
-import {NextApiRequest, NextApiResponse} from "next";
+import type {NextApiRequest, NextApiResponse} from "next";
 import z from "zod";
+import {PrismaClient} from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export default async function handleEmailConfirmation(req: NextApiRequest, res: NextApiResponse) {
     const {userid} = req.query;
