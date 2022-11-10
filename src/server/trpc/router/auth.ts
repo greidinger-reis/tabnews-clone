@@ -1,39 +1,8 @@
-import { TRPCError } from "@trpc/server";
+import {TRPCError} from "@trpc/server";
 import bcrypt from "bcrypt";
-import { z } from "zod";
-import { router, publicProcedure } from "./../trpc";
-import Nodemailer from "nodemailer";
-import { env } from "~/env/server.mjs";
-import type { User } from "@prisma/client";
-import { getBaseUrl } from "~/utils/trpc";
-
-export function sendConfirmationEmail(user: User) {
-    const transporter = Nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: env.GMAIL_USER,
-            pass: env.GMAIL_PASSWORD,
-        },
-    });
-    transporter.sendMail(
-        {
-            from: env.GMAIL_USER,
-            to: user.email,
-            subject: "TabNews Clone - Ative sua conta",
-            html: `<h1>Olá, ${user.username}</h1>
-            <p>Para ativar sua conta, clique no botão abaixo:</p>
-            <a href="${getBaseUrl()}/auth/confirm/${user.id}">Ativar conta</a>
-            `,
-        },
-        (err, info) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(info);
-            }
-        }
-    );
-}
+import {z} from "zod";
+import {router, publicProcedure} from "./../trpc";
+import {sendConfirmationEmail} from "~/server/nodemailer/send-confirmation";
 
 export const authRouter = router({
     checkCredentials: publicProcedure
@@ -43,7 +12,7 @@ export const authRouter = router({
                 password: z.string(),
             })
         )
-        .query(async ({ ctx, input }) => {
+        .query(async ({ctx, input}) => {
             const user = await ctx.prisma.user.findUnique({
                 where: {
                     email: input.email,
@@ -86,19 +55,41 @@ export const authRouter = router({
                 password: z.string(),
             })
         )
-        .mutation(async ({ ctx, input }) => {
-            try {
-                const user = await ctx.prisma.user.create({
-                    data: {
-                        username: input.username,
-                        email: input.email,
-                        password: await bcrypt.hash(input.password, 12),
-                    },
+        .mutation(async ({ctx, input}) => {
+            const user = await ctx.prisma.user.create({
+                data: {
+                    username: input.username,
+                    email: input.email,
+                    password: await bcrypt.hash(input.password, 12),
+                },
+            });
+            if (!user) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Não foi possível criar o usuário.",
                 });
-                sendConfirmationEmail(user);
-                return user;
-            } catch (error) {
-                return error;
             }
+            sendConfirmationEmail(user);
+            return {ok: true};
+        }),
+    confirmEmail: publicProcedure
+        .input(z.object({id: z.string()}))
+        .mutation(async ({ctx, input}) => {
+            const user = await ctx.prisma.user.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    activated: true,
+                },
+            });
+            if (!user) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message:
+                        "Usuário não encontrado para confirmação de email.",
+                });
+            }
+            return {ok: true};
         }),
 });

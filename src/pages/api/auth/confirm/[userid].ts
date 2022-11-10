@@ -1,17 +1,24 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {createProxySSGHelpers} from "@trpc/react-query/ssg";
-import {createContextInner} from "~/server/trpc/context";
-import {appRouter} from "~/server/trpc/router/_app";
+import z from "zod";
 
-export default async function handleEmailConfirmation(req:NextApiRequest,res:NextApiResponse){
+export default async function handleEmailConfirmation(req: NextApiRequest, res: NextApiResponse) {
     const {userid} = req.query;
-    const ssg = await createProxySSGHelpers({
-        ctx: await createContextInner({session: null}),
-        router: appRouter,
-    })
+    const id = z.string().parse(userid);
 
-    const post =  await ssg.posts.find.fetch({username: "admin", slug:"post-test"})
+    if (!id) return res.status(400).json({message: "Invalid user id"});
 
-    return res.status(200).json({post, userid});
+    try {
+        await prisma?.user.update({
+            where: {
+                id
+            },
+            data: {
+                activated: true
+            }
+        })
+        return res.status(200).json({message: "Usuário confirmado com sucesso"});
 
+    } catch (e) {
+        return res.status(404).json({message: "Usuário para confirmar não encontrado"});
+    }
 }
