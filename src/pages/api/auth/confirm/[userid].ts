@@ -12,7 +12,6 @@ export default async function handleEmailConfirmation(req: NextApiRequest, res: 
 
     try {
         console.log("Confirming user with id", id);
-        console.log("Prisma?", prisma);
         await prisma?.user.update({
             where: {
                 id
