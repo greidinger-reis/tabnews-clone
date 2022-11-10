@@ -70,7 +70,7 @@ export const authRouter = router({
                 });
             }
             sendConfirmationEmail(user);
-            return {ok: true};
+            return {ok: true, email: user.email};
         }),
     confirmEmail: publicProcedure
         .input(z.object({id: z.string()}))

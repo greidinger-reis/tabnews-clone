@@ -1,12 +1,13 @@
 import Head from "next/head";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { IoWarning } from "react-icons/io5";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {IoWarning} from "react-icons/io5";
 import classNames from "classnames";
-import { CgSpinner } from "react-icons/cg";
-import { useState } from "react";
-import { trpc } from "~/utils/trpc";
+import {CgSpinner} from "react-icons/cg";
+import {useState} from "react";
+import {trpc} from "~/utils/trpc";
+import {Outputs} from "~/types/trpc";
 
 const cadastroSchema = z.object({
     username: z
@@ -32,12 +33,12 @@ interface CadastroFormData {
 export default function CadastroPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [res, setRes] = useState<unknown>();
-    const { register, handleSubmit, formState } = useForm<CadastroFormData>({
+    const [res, setRes] = useState<Outputs["auth"]["register"] | null>(null);
+    const {register, handleSubmit, formState} = useForm<CadastroFormData>({
         resolver: zodResolver(cadastroSchema),
         criteriaMode: "all",
     });
-    const { mutateAsync: createUser } = trpc.auth.register.useMutation({
+    const {mutateAsync: createUser} = trpc.auth.register.useMutation({
         onError: (err) => setError(err.message),
     });
 
@@ -55,9 +56,9 @@ export default function CadastroPage() {
     return (
         <>
             <Head>
-                <title>Cadastro</title>
+                <title>{res?.ok ? "Confirme seu email" : "Cadastro"}</title>
             </Head>
-            <main className="mt-8 flex flex-col items-center">
+            {!res ? <main className="mt-8 flex flex-col items-center">
                 {error && (
                     <div
                         className="relative mb-4 flex w-full max-w-xl justify-center rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
@@ -86,15 +87,16 @@ export default function CadastroPage() {
                                     "block w-full appearance-none rounded-md border border-gray-300 py-3 px-3 leading-tight text-gray-700 focus:outline-blue-500",
                                     {
                                         "border-red-500":
-                                            formState.errors.username,
+                                        formState.errors.username,
                                     }
                                 )}
                                 type="text"
-                                {...register("username", { required: true })}
+                                {...register("username", {required: true})}
                             />
                             {formState.errors.username && (
-                                <div className="mt-1 flex text-[12px] font-medium text-red-500">
-                                    <IoWarning className="text-lg" />
+                                <div
+                                    className="mt-1 flex text-[12px] font-medium text-red-500">
+                                    <IoWarning className="text-lg"/>
                                     {formState.errors.username?.message}
                                 </div>
                             )}
@@ -111,15 +113,16 @@ export default function CadastroPage() {
                                     "block w-full appearance-none rounded-md border border-gray-300 py-3 px-3 leading-tight text-gray-700 focus:outline-blue-500",
                                     {
                                         "border-red-500":
-                                            formState.errors.email,
+                                        formState.errors.email,
                                     }
                                 )}
                                 type="email"
-                                {...register("email", { required: true })}
+                                {...register("email", {required: true})}
                             />
                             {formState.errors.email && (
-                                <div className="mt-1 flex text-[12px] font-medium text-red-500">
-                                    <IoWarning className="text-lg" />
+                                <div
+                                    className="mt-1 flex text-[12px] font-medium text-red-500">
+                                    <IoWarning className="text-lg"/>
                                     {formState.errors.email?.message}
                                 </div>
                             )}
@@ -136,15 +139,16 @@ export default function CadastroPage() {
                                     "block w-full appearance-none rounded-md border border-gray-300 py-3 px-3 leading-tight text-gray-700 focus:outline-blue-500",
                                     {
                                         "border-red-500":
-                                            formState.errors.password,
+                                        formState.errors.password,
                                     }
                                 )}
                                 type="password"
-                                {...register("password", { required: true })}
+                                {...register("password", {required: true})}
                             />
                             {formState.errors.password && (
-                                <div className="mt-1 flex text-[12px] font-medium text-red-500">
-                                    <IoWarning className="text-2xl" />
+                                <div
+                                    className="mt-1 flex text-[12px] font-medium text-red-500">
+                                    <IoWarning className="text-2xl"/>
                                     {formState.errors.password?.message}
                                 </div>
                             )}
@@ -157,19 +161,28 @@ export default function CadastroPage() {
                                     "btn-green relative w-full font-medium text-white",
                                     {
                                         "cursor-not-allowed bg-green-700":
-                                            isLoading,
+                                        isLoading,
                                     }
                                 )}
                             >
                                 Criar cadastro
                                 {isLoading && (
-                                    <CgSpinner className="absolute right-2 animate-spin text-lg" />
+                                    <CgSpinner
+                                        className="absolute right-2 animate-spin text-lg"/>
                                 )}
                             </button>
                         </div>
                     </div>
                 </form>
-            </main>
+            </main> : <main className="mt-32 flex flex-col items-center">
+                <h1 className="text-3xl text-gray-800 font-medium">
+                    Confira seu e-mail: {res.email}
+                </h1>
+                <p className="mt-1">
+                    Você receberá um link para confirmar seu cadastro e ativar a
+                    sua conta.
+                </p>
+            </main>}
         </>
     );
 }

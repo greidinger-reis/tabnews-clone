@@ -10,9 +10,13 @@ export function sendConfirmationEmail(user: User) {
             from: env.GMAIL_USER,
             to: user.email,
             subject: "TabNews Clone - Ative sua conta",
-            html: `<h1>Olá, ${user.username}</h1>
-            <p>Para ativar sua conta, clique no botão abaixo:</p>
-            <a href="${getBaseUrl()}/auth/confirm/${user.id}">Ativar conta</a>
+            html: `<p>${user.username}, clique no link abaixo para ativar seu cadastro no TabNews(clone)</p>
+            <a href="${getBaseUrl()}/cadastro/ativar/${user.id}">${getBaseUrl()}/cadastro/ativar/${user.id}</a>
+            <p>Caso você não tenha feito esta requisição, ignore esse email.</p>
+            <br/>
+            <p>Atenciosamente,</p>
+            <p>João Paulo Greidinger dos Reis</p>
+            <a href="https://greidinger.dev">greidinger.dev</a>
             `,
         },
         (err, info) => {
