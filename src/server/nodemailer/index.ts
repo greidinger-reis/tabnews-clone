@@ -1,6 +1,7 @@
 import { User } from "@prisma/client";
 import Nodemailer from "nodemailer";
 import { env } from "~/env/server.mjs";
+import type { Options } from "nodemailer/lib/mailer";
 
 const transporter = Nodemailer.createTransport({
     service: "gmail",
@@ -14,8 +15,11 @@ export async function sendConfirmationEmail(
     user: User
 ): Promise<{ ok: boolean; error: Error | null }> {
     const activationURL = `https://tabnews-clone.vercel.app/cadastro/ativar/${user.id}`;
-    const mailOpts = {
-        from: env.GMAIL_USER,
+    const mailOpts: Options = {
+        from: {
+            name: "Ative sua conta",
+            address: env.GMAIL_USER,
+        },
         to: user.email,
         subject: "TabNews Clone - Ative sua conta",
         html: `<p>${user.username}, clique no link abaixo para ativar seu cadastro no TabNews(clone)</p>
