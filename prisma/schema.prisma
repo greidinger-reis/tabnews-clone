@@ -20,6 +20,7 @@ model Post {
     authorId String
     title    String
     content  String
+    source   String?
     Comment  Comment[]
     Likes    Like[]
 

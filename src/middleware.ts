@@ -1,22 +1,15 @@
-import {type NextRequest, NextResponse} from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-// if there is a session, redirect to / (home)
-export function middleware(req: NextRequest) {
-    if (
-        req.cookies.has("next-auth.session-token") ||
-        req.cookies.has("__Secure-next-auth.session-token")
-    ) {
-        console.log({
-            status: "session exists",
-            cookies: req.cookies,
-        });
+// if there is a session token, redirect to / (home)
+export async function middleware(req: NextRequest) {
+    const token = await getToken({ req });
+    if (req.nextUrl.pathname === "/publicar" && !token)
+        return NextResponse.redirect(new URL("/login", req.url));
+    if (req.nextUrl.pathname === "/login" && token)
         return NextResponse.redirect(new URL("/", req.url));
-    }
-    console.log({
-        status: "no session",
-        cookies: req.cookies,
-    });
+
     return NextResponse.next();
 }
 
-export const config = {matcher: ["/login"]};
+export const config = { matcher: ["/login", "/publicar"] };
