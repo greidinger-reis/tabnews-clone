@@ -19,7 +19,7 @@ export const commentRouter = router({
                         },
                     },
                     include: {
-                        author: { select: { username: true, id: true } },
+                        author: { select: { username: true } },
                         _count: { select: { likes: true } },
                     },
                 })

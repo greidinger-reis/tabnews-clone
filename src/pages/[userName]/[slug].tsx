@@ -5,7 +5,7 @@ import Spinner from "~/components/Spinner";
 import { CommentForm } from "~/components/comments/CommentForm";
 import { CommentList } from "~/components/comments/CommentList";
 import { atom, useAtom } from "jotai";
-import { formatComments } from "~/components/comments/formatComment";
+import formatComments from "~/components/comments/formatComment";
 
 interface RouterQuery {
     userName: string;
@@ -30,7 +30,7 @@ export default function PostPage() {
         }
     );
 
-    const { data: rawComments } = trpc.comments.list.useQuery(
+    const { data: comments } = trpc.comments.list.useQuery(
         {
             postId: query.data?.id ?? "",
         },
@@ -38,6 +38,8 @@ export default function PostPage() {
             enabled: !!query.data?.id,
         }
     );
+
+    console.log(comments);
 
     return (
         <div>
@@ -51,13 +53,11 @@ export default function PostPage() {
                 <div className="space-y-4">
                     <Post post={query.data} />
                     <CommentForm postId={query.data.id} />
-                    {rawComments ? (
+                    {comments && (
                         <div className="mx-auto max-w-4xl">
-                            <CommentList
-                                comments={formatComments(rawComments)}
-                            />
+                            <CommentList comments={formatComments(comments)} />
                         </div>
-                    ) : null}
+                    )}
                 </div>
             )}
         </div>

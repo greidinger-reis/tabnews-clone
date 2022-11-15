@@ -36,9 +36,9 @@ model Like {
     userId    String
     commentId String?
 
-    Post    Post?    @relation(fields: [postId], references: [id])
-    User    User     @relation(fields: [userId], references: [id])
-    Comment Comment? @relation(fields: [commentId], references: [id])
+    Post    Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+    User    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    Comment Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

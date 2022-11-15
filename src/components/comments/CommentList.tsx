@@ -1,5 +1,4 @@
-import { Fragment, useState } from "react";
-import type { CommentWithChildren } from "./types";
+import { useState } from "react";
 import { CommentForm } from "./CommentForm";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { formatDistance } from "date-fns";
@@ -14,17 +13,19 @@ import { Likes } from "../Likes";
 import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "../headlessui/Dropdown";
 import { Menu } from "@headlessui/react";
+import type { CommentWithChildren } from "./types";
 
 function Comment({
     id,
     parentId,
+    children,
     content,
     createdAt,
+    authorId,
     author,
-    children,
 }: CommentWithChildren) {
-    const [postId] = useAtom(PostIdAtom);
     const session = useSession();
+    const [postId] = useAtom(PostIdAtom);
     const [autoAnimate] = useAutoAnimate<HTMLLIElement>();
     const [isReplying, setIsReplying] = useState(false);
 
@@ -45,7 +46,7 @@ function Comment({
         },
     });
 
-    const isOwner = session?.data?.user?.id === author.id;
+    const isOwner = session?.data?.user?.id === authorId;
     const userHasLiked =
         likes?.some((like) => like.userId === session?.data?.user?.id) ?? false;
 
@@ -77,7 +78,7 @@ function Comment({
                     </span>
                     {isOwner && (
                         <div className="ml-auto inline">
-                            <Dropdown button={<BsThreeDots />}>
+                            <Dropdown button={<BsThreeDots className="mt-1" />}>
                                 <div className="flex w-full flex-col gap-1 py-2 text-sm">
                                     <Menu.Item>
                                         {({ active }) => (
@@ -119,6 +120,9 @@ function Comment({
                         {content}
                     </Markdown>
                 </div>
+                <div>
+                    ID: {id} | parentID: {parentId}
+                </div>
                 <button
                     className="btn-gray w-fit text-sm font-medium"
                     onClick={() => setIsReplying(!isReplying)}
@@ -130,7 +134,7 @@ function Comment({
                         <CommentForm
                             postId={postId}
                             setIsReplying={setIsReplying}
-                            parentId={parentId ?? undefined}
+                            parentId={id}
                         />
                     </div>
                 )}

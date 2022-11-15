@@ -1,34 +1,31 @@
 import type { Comment, CommentWithChildren } from "./types";
 
-/**
- * takes the raw comment data and formats it into a tree structure
- */
-export function formatComments(rawComments: Comment[]): CommentWithChildren[] {
+function formatComments(comments: Array<Comment>) {
     const map = new Map();
 
-    const roots: CommentWithChildren[] = [];
+    const roots: Array<CommentWithChildren> = [];
 
-    // this is a map of comment id to comment with children
-    for (let i = 0; i < rawComments.length; i++) {
-        const commentId = rawComments[i]?.id;
+    for (let i = 0; i < comments.length; i++) {
+        const commentId = comments[i]?.id;
 
         map.set(commentId, i);
 
-        (rawComments[i] as CommentWithChildren).children = [];
+        (comments[i] as CommentWithChildren).children = [];
 
-        if (rawComments[i]?.parentId) {
-            const parentId = rawComments[i]?.parentId;
-            const parentIndex = map.get(parentId);
+        if (typeof comments[i]?.parentId === "string") {
+            const parentCommentIndex: number = map.get(comments[i]?.parentId);
 
-            (rawComments[parentIndex] as CommentWithChildren).children.push(
-                rawComments[i] as CommentWithChildren
+            (comments[parentCommentIndex] as CommentWithChildren).children.push(
+                comments[i] as CommentWithChildren
             );
 
             continue;
         }
 
-        roots.push(rawComments[i] as CommentWithChildren);
+        roots.push(comments[i] as CommentWithChildren);
     }
 
     return roots;
 }
+
+export default formatComments;

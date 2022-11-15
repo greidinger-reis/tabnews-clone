@@ -2,10 +2,9 @@ import type { Outputs } from "~/types/trpc";
 import { formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import Markdown from "markdown-to-jsx";
-import { BsChevronDown, BsChevronUp, BsLink45Deg } from "react-icons/bs";
+import { BsLink45Deg } from "react-icons/bs";
 import { trpc } from "~/utils/trpc";
 import { useSession } from "next-auth/react";
-import classNames from "classnames";
 import { useRouter } from "next/router";
 import { Likes } from "./Likes";
 
