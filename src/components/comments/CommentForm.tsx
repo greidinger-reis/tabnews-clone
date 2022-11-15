@@ -19,7 +19,7 @@ import {
     unorderedListCommand,
     useTextAreaMarkdownEditor,
 } from "react-mde";
-import { trpc } from "../utils/trpc";
+import { trpc } from "~/utils/trpc";
 
 export function CommentForm({
     postId,

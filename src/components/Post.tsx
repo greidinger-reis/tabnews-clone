@@ -7,6 +7,7 @@ import { trpc } from "~/utils/trpc";
 import { useSession } from "next-auth/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
+import { Likes } from "./Likes";
 
 type PostQueryOutput = Outputs["posts"]["find"];
 
@@ -14,8 +15,8 @@ export function Post({ post }: { post: PostQueryOutput }) {
     const session = useSession();
     const router = useRouter();
     const trpcContext = trpc.useContext();
-    const addLike = trpc.likes.add.useMutation();
-    const removeLike = trpc.likes.remove.useMutation();
+    const addLike = trpc.likes.addToPost.useMutation();
+    const removeLike = trpc.likes.removeFromPost.useMutation();
 
     const userHasLiked = post.Likes.some(
         (like) => like.userId === session.data?.user?.id
@@ -59,34 +60,15 @@ export function Post({ post }: { post: PostQueryOutput }) {
 
     return (
         <div className="prose mx-auto mt-4 flex max-w-[58rem]">
-            <aside className="flex flex-col items-center px-1 pt-4 sm:px-4">
-                <div className="flex flex-col items-center gap-1">
-                    <button
-                        className={classNames(
-                            "rounded-lg p-2 hover:bg-[#ddf4ff]/50",
-                            {
-                                "bg-[#ddf4ff]/50 text-blue-500": userHasLiked,
-                            }
-                        )}
-                        onClick={handleAddLike}
-                    >
-                        <BsChevronUp className="text-sm" />
-                    </button>
-                    <span className="text-[12px] font-medium text-blue-500">
-                        {post._count.Likes}
-                    </span>
-                    <button
-                        className="rounded-lg p-2 hover:bg-[#ddf4ff]/50"
-                        onClick={handleRemoveLike}
-                    >
-                        <BsChevronDown className="text-sm" />
-                    </button>
-                </div>
-                <div className="h-full border-l border-dotted"></div>
-            </aside>
+            <Likes
+                handleAddLike={handleAddLike}
+                handleRemoveLike={handleRemoveLike}
+                likesCount={post._count.Likes}
+                userHasLiked={userHasLiked}
+            />
             <main>
                 <div>
-                    <span className="rounded-md bg-[#ddf4ff] px-2 py-1 font-mono text-[12px] text-blue-500">
+                    <span className="rounded-md bg-[#ddf4ff] px-2 py-1 font-mono text-xs text-blue-500">
                         {post.author.username}
                     </span>
                     <span className="ml-2 text-[12px]">

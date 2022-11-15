@@ -32,11 +32,11 @@ model Post {
 
 model Like {
     id        String  @id @default(cuid())
-    postId    String
+    postId    String?
     userId    String
     commentId String?
 
-    Post    Post     @relation(fields: [postId], references: [id])
+    Post    Post?    @relation(fields: [postId], references: [id])
     User    User     @relation(fields: [userId], references: [id])
     Comment Comment? @relation(fields: [commentId], references: [id])
 
