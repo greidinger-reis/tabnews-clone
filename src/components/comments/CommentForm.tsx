@@ -63,9 +63,7 @@ export function CommentForm({
     });
 
     async function submitComment(data: { content: string }) {
-        const { content } = data;
-        console.log(data);
-        mutate({ postId, parentId, content });
+        mutate({ postId, parentId, content: data.content });
     }
 
     useEffect(() => {
