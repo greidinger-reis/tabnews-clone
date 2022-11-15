@@ -1,6 +1,7 @@
 import classNames from "classnames";
-import {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
+import Markdown from "markdown-to-jsx";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
     boldCommand,
     checkedListCommand,
@@ -17,21 +18,19 @@ import {
     unorderedListCommand,
     useTextAreaMarkdownEditor,
 } from "react-mde";
-import {trpc} from "../../utils/trpc";
-import CommentFormButtons from "./CommentEditorButtons";
-import {CommentFormContext} from "./context";
+import { trpc } from "../../utils/trpc";
 
 export function CommentForm({
-                                postId,
-                                parentId,
-                                setIsReplying,
-                            }: {
+    postId,
+    parentId,
+    setIsReplying,
+}: {
     postId: string;
     parentId?: string;
     setIsReplying?: (value: boolean) => void;
 }) {
     const [comment, setComment] = useState("");
-    const {ref, commandController} = useTextAreaMarkdownEditor({
+    const { ref, commandController } = useTextAreaMarkdownEditor({
         commandMap: {
             h2: headingLevel2Command,
             h3: headingLevel3Command,
@@ -48,63 +47,92 @@ export function CommentForm({
             codeBlock: codeBlockCommand,
         },
     });
-    const [editorButtonsShown, setEditorButtonsShown] = useState(false);
-    const {register, handleSubmit, reset, setValue} = useForm<{
+    const [preview, setPreview] = useState(false);
+    const { register, handleSubmit, reset, setValue, getValues } = useForm<{
         content: string;
     }>();
     const trpcContext = trpc.useContext();
 
     //TODO: Add state transition
-    const {mutate} = trpc.comments.create.useMutation({
+    const { mutate } = trpc.comments.create.useMutation({
         onSuccess: () => {
             setComment("");
             setIsReplying && setIsReplying(false);
             reset();
-            trpcContext.comments.list.invalidate({postId});
+            trpcContext.comments.list.invalidate({ postId });
         },
     });
 
     async function submitComment(data: { content: string }) {
-        const {content} = data;
-        mutate({postId, parentId, content});
+        const { content } = data;
+        mutate({ postId, parentId, content });
     }
 
     useEffect(() => {
-        register("content", {required: true});
+        register("content", { required: true });
     });
 
     return (
-        <CommentFormContext.Provider value={{commandController}}>
-            <div className="group flex flex-col rounded">
-                {editorButtonsShown ? <CommentFormButtons/> : null}
+        <div className="group mx-auto flex max-w-4xl flex-col rounded-md border border-zinc-300 px-6 py-4">
+            <div className="overflow-hidden rounded-md border border-zinc-300 focus-within:outline focus-within:outline-2 focus-within:outline-blue-500">
+                <div className="space-x-4 border-b border-zinc-300 bg-gray-100 px-4 py-2 text-sm">
+                    <button
+                        className={`transition-all ${
+                            preview ? "" : "text-blue-500"
+                        }`}
+                        onClick={() => setPreview(false)}
+                    >
+                        Escrever
+                    </button>
+                    <button
+                        className={`transition-all ${
+                            preview ? "text-blue-500" : ""
+                        }`}
+                        onClick={() => setPreview(true)}
+                    >
+                        Visualizar
+                    </button>
+                </div>
+                <div
+                    className={classNames(
+                        "prose min-h-[176px] max-w-none p-4 prose-headings:my-0 prose-h1:text-base prose-h1:font-normal prose-p:leading-normal",
+                        {
+                            hidden: !preview,
+                        }
+                    )}
+                >
+                    <Markdown options={{ disableParsingRawHTML: true }}>
+                        {getValues("content") ?? ""}
+                    </Markdown>
+                </div>
                 <form
                     onSubmit={handleSubmit(submitComment)}
-                    className="flex flex-col gap-4"
+                    className={classNames("flex flex-col gap-4", {
+                        hidden: preview,
+                    })}
                 >
                     <textarea
-                        rows={4}
+                        rows={6}
                         name="content"
                         value={comment}
-                        onFocus={() => setEditorButtonsShown(true)}
                         ref={ref}
                         onChange={(e) => {
                             setComment(e.target.value);
                             setValue("content", e.target.value);
                         }}
-                        className={classNames(
-                            "bg-base-100 resize-none border border-zinc-400 p-4 outline-none focus:border-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white",
-                            {
-                                rounded: !editorButtonsShown,
-                                "rounded-b": editorButtonsShown,
-                            }
-                        )}
-                        placeholder="Comment"
+                        className="bg-base-100 resize-none p-4 outline-none"
                     />
-                    <button className="btn-green" type="submit">
-                        Publicar
-                    </button>
                 </form>
             </div>
-        </CommentFormContext.Provider>
+            <div className="ml-auto mt-4 flex gap-4 text-sm">
+                <button>Cancelar</button>
+                <button
+                    className="btn-sm-green font-medium text-white"
+                    type="submit"
+                >
+                    Publicar
+                </button>
+            </div>
+        </div>
     );
 }

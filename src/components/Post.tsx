@@ -58,7 +58,7 @@ export function Post({ post }: { post: PostQueryOutput }) {
     }
 
     return (
-        <div className="prose mx-auto mt-4 flex sm:w-3/4 sm:max-w-none lg:w-1/2">
+        <div className="prose mx-auto mt-4 flex max-w-[58rem]">
             <aside className="flex flex-col items-center px-1 pt-4 sm:px-4">
                 <div className="flex flex-col items-center gap-1">
                     <button
@@ -101,10 +101,15 @@ export function Post({ post }: { post: PostQueryOutput }) {
                 </div>
                 <article>
                     <Markdown>{post.content}</Markdown>
-                    <p className="text-lg font-medium">
-                        <BsLink45Deg />
+                    <p className="flex items-center gap-1 font-medium">
+                        <BsLink45Deg className="mt-1 text-xl text-black" />
                         Fonte:
-                        {post.source}
+                        <a
+                            className="normal-case text-blue-500 no-underline hover:underline"
+                            href={post.source ?? undefined}
+                        >
+                            {post.source}
+                        </a>
                     </p>
                 </article>
             </main>

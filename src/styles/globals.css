@@ -18,6 +18,10 @@
     @apply flex items-center justify-center rounded-md border border-green-700/50 bg-green-600 px-4 py-2 transition-all hover:bg-green-700;
 }
 
+.btn-sm-green {
+    @apply flex items-center justify-center rounded-md border border-green-700/50 bg-green-600 px-4 py-1 transition-all hover:bg-green-700;
+}
+
 .btn-yellow {
     @apply flex items-center justify-center rounded-md border border-yellow-600/50 bg-yellow-500 px-4 py-2 transition-all hover:bg-yellow-600;
 }
