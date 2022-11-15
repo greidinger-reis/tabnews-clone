@@ -1,7 +1,8 @@
 import classNames from "classnames";
 import Markdown from "markdown-to-jsx";
-import { useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { IoWarning } from "react-icons/io5";
 import {
     boldCommand,
     checkedListCommand,
@@ -18,7 +19,7 @@ import {
     unorderedListCommand,
     useTextAreaMarkdownEditor,
 } from "react-mde";
-import { trpc } from "../../utils/trpc";
+import { trpc } from "../utils/trpc";
 
 export function CommentForm({
     postId,
@@ -29,7 +30,7 @@ export function CommentForm({
     parentId?: string;
     setIsReplying?: (value: boolean) => void;
 }) {
-    const [comment, setComment] = useState("");
+    const [preview, setPreview] = useState(false);
     const { ref, commandController } = useTextAreaMarkdownEditor({
         commandMap: {
             h2: headingLevel2Command,
@@ -47,8 +48,7 @@ export function CommentForm({
             codeBlock: codeBlockCommand,
         },
     });
-    const [preview, setPreview] = useState(false);
-    const { register, handleSubmit, reset, setValue, getValues } = useForm<{
+    const form = useForm<{
         content: string;
     }>();
     const trpcContext = trpc.useContext();
@@ -56,25 +56,37 @@ export function CommentForm({
     //TODO: Add state transition
     const { mutate } = trpc.comments.create.useMutation({
         onSuccess: () => {
-            setComment("");
             setIsReplying && setIsReplying(false);
-            reset();
+            form.reset();
             trpcContext.comments.list.invalidate({ postId });
         },
     });
 
     async function submitComment(data: { content: string }) {
         const { content } = data;
+        console.log(data);
         mutate({ postId, parentId, content });
     }
 
     useEffect(() => {
-        register("content", { required: true });
+        form.register("content", { required: true });
     });
 
     return (
-        <div className="group mx-auto flex max-w-4xl flex-col rounded-md border border-zinc-300 px-6 py-4">
-            <div className="overflow-hidden rounded-md border border-zinc-300 focus-within:outline focus-within:outline-2 focus-within:outline-blue-500">
+        <div className="group mx-2 flex max-w-4xl flex-col rounded-md border border-zinc-300 px-6 py-4 sm:mx-auto">
+            <div
+                className={classNames(
+                    "overflow-hidden rounded-md border focus-within:outline focus-within:outline-2 ",
+                    {
+                        "border-red-500": form.formState.errors.content,
+                        "border-zinc-300": !form.formState.errors.content,
+                        "focus-within:outline-blue-500":
+                            !form.formState.errors.content,
+                        "focus-within:outline-red-500/50":
+                            form.formState.errors.content,
+                    }
+                )}
+            >
                 <div className="space-x-4 border-b border-zinc-300 bg-gray-100 px-4 py-2 text-sm">
                     <button
                         className={`transition-all ${
@@ -102,33 +114,38 @@ export function CommentForm({
                     )}
                 >
                     <Markdown options={{ disableParsingRawHTML: true }}>
-                        {getValues("content") ?? ""}
+                        {form.getValues("content") ?? ""}
                     </Markdown>
                 </div>
                 <form
-                    onSubmit={handleSubmit(submitComment)}
                     className={classNames("flex flex-col gap-4", {
                         hidden: preview,
                     })}
                 >
                     <textarea
-                        rows={6}
                         name="content"
-                        value={comment}
+                        rows={6}
                         ref={ref}
-                        onChange={(e) => {
-                            setComment(e.target.value);
-                            setValue("content", e.target.value);
+                        className="bg-base-100 resize-none p-4 font-mono text-sm outline-none"
+                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                            form.setValue("content", e.target.value);
                         }}
-                        className="bg-base-100 resize-none p-4 outline-none"
                     />
                 </form>
             </div>
+            {form.formState.errors.content && (
+                <div className="mt-1 flex font-medium text-red-500">
+                    <IoWarning size={16} />{" "}
+                    <p className="text-xs">
+                        &quot;body&quot; é um campo obrigatório
+                    </p>
+                </div>
+            )}
             <div className="ml-auto mt-4 flex gap-4 text-sm">
                 <button>Cancelar</button>
                 <button
+                    onClick={form.handleSubmit(submitComment)}
                     className="btn-sm-green font-medium text-white"
-                    type="submit"
                 >
                     Publicar
                 </button>

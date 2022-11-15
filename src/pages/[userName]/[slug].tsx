@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { trpc } from "~/utils/trpc";
 import { Post } from "~/components/Post";
 import Spinner from "~/components/Spinner";
-import { CommentForm } from "~/components/comments";
+import { CommentForm } from "~/components/CommentForm";
 
 interface RouterQuery {
     userName: string;

@@ -101,9 +101,9 @@ export function Post({ post }: { post: PostQueryOutput }) {
                 </div>
                 <article>
                     <Markdown>{post.content}</Markdown>
-                    <p className="flex items-center gap-1 font-medium">
-                        <BsLink45Deg className="mt-1 text-xl text-black" />
-                        Fonte:
+                    <p className="font-medium">
+                        <BsLink45Deg className="inline text-xl text-black" />
+                        Fonte:{" "}
                         <a
                             className="normal-case text-blue-500 no-underline hover:underline"
                             href={post.source ?? undefined}
