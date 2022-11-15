@@ -40,6 +40,14 @@ export const authRouter = router({
                 });
             }
 
+            if (!user.activated) {
+                throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message:
+                        "Usuário não ativado. Verifique seu e-mail para ativar sua conta.",
+                });
+            }
+
             return {
                 id: user.id,
                 email: user.email,
