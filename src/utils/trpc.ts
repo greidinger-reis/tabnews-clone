@@ -1,7 +1,7 @@
-import {httpBatchLink, loggerLink} from "@trpc/client";
-import {createTRPCNext} from "@trpc/next";
+import { httpBatchLink, loggerLink } from "@trpc/client";
+import { createTRPCNext } from "@trpc/next";
 import superjson from "superjson";
-import {type AppRouter} from "../server/trpc/router/_app";
+import { type AppRouter } from "../server/trpc/router/_app";
 
 export function getBaseUrl() {
     if (typeof window !== "undefined") return ""; // browser should use relative url
@@ -27,7 +27,10 @@ export const trpc = createTRPCNext<AppRouter>({
             queryClientConfig: {
                 defaultOptions: {
                     queries: {
-                        refetchOnWindowFocus: false,
+                        refetchOnWindowFocus:
+                            process.env.NODE_ENV === "development"
+                                ? false
+                                : true,
                     },
                 },
             },

@@ -55,7 +55,9 @@ export default function PostPage() {
                     <CommentForm postId={query.data.id} />
                     {comments && (
                         <div className="mx-auto max-w-4xl">
-                            <CommentList comments={formatComments(comments)} />
+                            <CommentList
+                                comments={formatComments(comments || [])}
+                            />
                         </div>
                     )}
                 </div>

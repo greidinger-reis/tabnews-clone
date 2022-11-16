@@ -45,17 +45,20 @@ model Like {
 }
 
 model Comment {
-    id       String  @id @default(cuid())
-    postId   String
-    parentId String?
-    authorId String
-    content  String
-    likes    Like[]
+    id      String @id @default(cuid())
+    content String
 
-    parent   Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
+    author   User   @relation(fields: [authorId], references: [id])
+    authorId String
+
+    post   Post   @relation(fields: [postId], references: [id])
+    postId String
+
     children Comment[] @relation("CommentToComment")
-    post     Post      @relation(fields: [postId], references: [id])
-    author   User      @relation(fields: [authorId], references: [id])
+    parent   Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
+    parentId String?
+
+    likes Like[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

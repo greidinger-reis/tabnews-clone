@@ -17,7 +17,6 @@ import type { CommentWithChildren } from "./types";
 
 function Comment({
     id,
-    parentId,
     children,
     content,
     createdAt,
@@ -34,16 +33,16 @@ function Comment({
             commentId: id,
         });
 
+    function handleRefetchLikes() {
+        refetchLikes();
+    }
+
     const { mutate: likeComment } = trpc.likes.addToComment.useMutation({
-        onSuccess: () => {
-            refetchLikes();
-        },
+        onSuccess: handleRefetchLikes,
     });
 
     const { mutate: unlikeComment } = trpc.likes.removeFromComment.useMutation({
-        onSuccess: () => {
-            refetchLikes();
-        },
+        onSuccess: handleRefetchLikes,
     });
 
     const isOwner = session?.data?.user?.id === authorId;
@@ -119,9 +118,6 @@ function Comment({
                     >
                         {content}
                     </Markdown>
-                </div>
-                <div>
-                    ID: {id} | parentID: {parentId}
                 </div>
                 <button
                     className="btn-gray w-fit text-sm font-medium"

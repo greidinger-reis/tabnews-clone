@@ -11,7 +11,7 @@ export const commentRouter = router({
         )
         .query(async ({ input, ctx }) => {
             const { postId } = input;
-            return ctx.prisma.comment
+            const comments = await ctx.prisma.comment
                 .findMany({
                     where: {
                         post: {
@@ -22,6 +22,9 @@ export const commentRouter = router({
                         author: { select: { username: true } },
                         _count: { select: { likes: true } },
                     },
+                    orderBy: {
+                        createdAt: "desc",
+                    },
                 })
                 .catch((err) => {
                     throw new TRPCError({
@@ -29,6 +32,8 @@ export const commentRouter = router({
                         message: err.message,
                     });
                 });
+            console.log(comments);
+            return comments;
         }),
 
     create: protectedProcedure
