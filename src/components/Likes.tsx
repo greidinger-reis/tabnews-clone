@@ -36,7 +36,7 @@ export function Likes({
                     <BsChevronDown className="text-sm" />
                 </button>
             </div>
-            <div className="h-full border-l border-dotted"></div>
+            <div className="h-full border-l border-dotted border-zinc-300"></div>
         </aside>
     );
 }

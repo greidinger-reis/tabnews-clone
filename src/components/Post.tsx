@@ -82,16 +82,18 @@ export function Post({ post }: { post: PostQueryOutput }) {
                 </div>
                 <article>
                     <Markdown>{post.content}</Markdown>
-                    <p className="font-medium">
-                        <BsLink45Deg className="inline text-xl text-black" />
-                        Fonte:{" "}
-                        <a
-                            className="normal-case text-blue-500 no-underline hover:underline"
-                            href={post.source ?? undefined}
-                        >
-                            {post.source}
-                        </a>
-                    </p>
+                    {post.source && (
+                        <p className="font-medium">
+                            <BsLink45Deg className="inline text-xl text-black" />
+                            Fonte:{" "}
+                            <a
+                                className="normal-case text-blue-500 no-underline hover:underline"
+                                href={post.source ?? undefined}
+                            >
+                                {post.source}
+                            </a>
+                        </p>
+                    )}
                 </article>
             </main>
         </div>

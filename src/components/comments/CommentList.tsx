@@ -154,21 +154,12 @@ function Comment({
                         {content}
                     </Markdown>
                 </div>
-                <button
-                    className="btn-gray w-fit text-sm font-medium"
-                    onClick={() => setIsReplying(!isReplying)}
-                >
-                    Responder
-                </button>
-                {isReplying && (
-                    <div className="mb-4">
-                        <CommentForm
-                            postId={postId}
-                            setIsReplying={setIsReplying}
-                            parentId={id}
-                        />
-                    </div>
-                )}
+                <CommentForm
+                    postId={postId}
+                    parentId={id}
+                    isReplying={isReplying}
+                    setIsReplying={setIsReplying}
+                />
                 {children && children.length > 0 && (
                     <CommentList comments={children} />
                 )}

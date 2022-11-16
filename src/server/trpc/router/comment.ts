@@ -32,7 +32,6 @@ export const commentRouter = router({
                         message: err.message,
                     });
                 });
-            console.log(comments);
             return comments;
         }),
 

@@ -6,6 +6,8 @@ import { CommentForm } from "~/components/comments/CommentForm";
 import { CommentList } from "~/components/comments/CommentList";
 import { atom, useAtom } from "jotai";
 import formatComments from "~/components/comments/formatComment";
+import { useState } from "react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 interface RouterQuery {
     userName: string;
@@ -15,8 +17,9 @@ interface RouterQuery {
 export const PostIdAtom = atom("");
 
 export default function PostPage() {
-    const [, setPostId] = useAtom(PostIdAtom);
     const router = useRouter();
+    const [, setPostId] = useAtom(PostIdAtom);
+    const [isReplying, setIsReplying] = useState(false);
     const { slug, userName } = router.query as unknown as RouterQuery;
 
     const query = trpc.posts.find.useQuery(
@@ -39,8 +42,6 @@ export default function PostPage() {
         }
     );
 
-    console.log(comments);
-
     return (
         <div>
             {query.isLoading && (
@@ -52,7 +53,14 @@ export default function PostPage() {
             {query.data && (
                 <div className="space-y-4">
                     <Post post={query.data} />
-                    <CommentForm postId={query.data.id} />
+                    <div className="mx-auto max-w-4xl rounded-md border border-zinc-300 py-4 px-6">
+                        <CommentForm
+                            replyingToPost={true}
+                            isReplying={isReplying}
+                            setIsReplying={setIsReplying}
+                            postId={query.data.id}
+                        />
+                    </div>
                     {comments && (
                         <div className="mx-auto max-w-4xl">
                             <CommentList
