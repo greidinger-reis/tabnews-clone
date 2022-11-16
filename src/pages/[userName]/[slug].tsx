@@ -52,7 +52,7 @@ export default function PostPage() {
             {query.data && (
                 <div className="space-y-4">
                     <Post post={query.data} />
-                    <div className="mx-2 max-w-4xl rounded-md border border-zinc-300 py-4 px-6 sm:mx-auto">
+                    <div className="mx-2 max-w-4xl rounded-md border border-zinc-300 py-4 px-3 sm:mx-auto sm:px-6">
                         <CommentForm
                             replyingToPost={true}
                             isReplying={isReplying}

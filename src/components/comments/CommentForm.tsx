@@ -83,20 +83,17 @@ export function CommentForm({
                     className={
                         replyingToPost
                             ? "flex w-full flex-col"
-                            : "group m-2 flex w-full flex-col rounded-md border border-zinc-300 px-6 py-4"
+                            : "group flex w-full flex-col rounded-md border border-zinc-300 py-4 px-3 sm:m-2 sm:px-6"
                     }
                 >
                     <div
                         className={classNames(
                             "overflow-hidden rounded-md border focus-within:outline focus-within:outline-2 ",
                             {
-                                "border-red-500": form.formState.errors.content,
-                                "border-zinc-300":
-                                    !form.formState.errors.content,
-                                "focus-within:outline-blue-500":
-                                    !form.formState.errors.content,
-                                "focus-within:outline-red-500/50":
+                                "border-red-500 focus-within:outline-red-500/50":
                                     form.formState.errors.content,
+                                "border-zinc-300 focus-within:outline-blue-500":
+                                    !form.formState.errors.content,
                             }
                         )}
                     >
@@ -170,7 +167,9 @@ export function CommentForm({
                 </div>
             ) : (
                 <button
-                    className="btn-gray my-2 w-fit text-sm font-medium"
+                    className={`btn-gray my-2 w-fit text-sm font-medium ${
+                        replyingToPost && "ml-1 sm:ml-0"
+                    }`}
                     onClick={() => setIsReplying(!isReplying)}
                 >
                     Responder
