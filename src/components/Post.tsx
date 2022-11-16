@@ -67,7 +67,7 @@ export function Post({ post }: { post: PostQueryOutput }) {
             />
             <main>
                 <div>
-                    <span className="rounded-md bg-[#ddf4ff] px-2 py-1 font-mono text-xs text-blue-500">
+                    <span className="mono rounded-md bg-[#ddf4ff] px-2 py-1 text-xs text-blue-500">
                         {post.author.username}
                     </span>
                     <span className="ml-2 text-[12px]">

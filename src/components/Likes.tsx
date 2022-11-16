@@ -13,7 +13,7 @@ export function Likes({
     userHasLiked: boolean;
 }) {
     return (
-        <aside className="flex flex-col items-center pr-2">
+        <aside className="flex flex-col items-center pr-2 pl-2 sm:pl-0">
             <div className="flex flex-col items-center gap-1">
                 <button
                     className={classNames(

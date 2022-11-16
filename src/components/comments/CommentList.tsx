@@ -99,7 +99,7 @@ function Comment({
                 <div className="flex items-center gap-1">
                     <Link
                         href={`/${author.username}`}
-                        className="rounded-md bg-[#ddf4ff] px-2 py-1 font-mono text-xs text-blue-500"
+                        className="mono rounded-md bg-[#ddf4ff] px-2 py-1 text-xs text-blue-500"
                     >
                         {author.username}
                     </Link>{" "}
@@ -110,7 +110,11 @@ function Comment({
                     </span>
                     {isOwner && (
                         <div className="ml-auto inline">
-                            <Dropdown button={<BsThreeDots className="mt-1" />}>
+                            <Dropdown
+                                button={
+                                    <BsThreeDots className="mt-1 mr-2 sm:mr-0" />
+                                }
+                            >
                                 <div className="flex w-full flex-col gap-1 py-2 text-sm">
                                     <Menu.Item>
                                         {({ active }) => (

@@ -7,7 +7,6 @@ import { CommentList } from "~/components/comments/CommentList";
 import { atom, useAtom } from "jotai";
 import formatComments from "~/components/comments/formatComment";
 import { useState } from "react";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 interface RouterQuery {
     userName: string;
@@ -53,7 +52,7 @@ export default function PostPage() {
             {query.data && (
                 <div className="space-y-4">
                     <Post post={query.data} />
-                    <div className="mx-auto max-w-4xl rounded-md border border-zinc-300 py-4 px-6">
+                    <div className="mx-2 max-w-4xl rounded-md border border-zinc-300 py-4 px-6 sm:mx-auto">
                         <CommentForm
                             replyingToPost={true}
                             isReplying={isReplying}
