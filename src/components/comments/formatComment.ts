@@ -36,7 +36,7 @@ function formatComments(comments: Comment[]): CommentWithChildren[] {
         );
     });
     // sort the roots by likes
-    const sortedRoots = roots.sort((a, b) => b._count.likes - a._count.likes);
+    const sortedRoots = roots.sort((a, b) => b.likes.length - a.likes.length);
 
     console.log(`formatComments took ${Date.now() - initTime}ms`);
     return sortedRoots;

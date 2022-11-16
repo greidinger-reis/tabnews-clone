@@ -8,8 +8,8 @@ export function Likes({
     userHasLiked,
 }: {
     likesCount: number;
-    handleRemoveLike: () => Promise<void>;
-    handleAddLike: () => Promise<void>;
+    handleRemoveLike: () => void;
+    handleAddLike: () => void;
     userHasLiked: boolean;
 }) {
     return (

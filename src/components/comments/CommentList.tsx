@@ -14,6 +14,7 @@ import { BsThreeDots } from "react-icons/bs";
 import Dropdown from "../headlessui/Dropdown";
 import { Menu } from "@headlessui/react";
 import type { CommentWithChildren } from "./types";
+import { useRouter } from "next/router";
 
 function Comment({
     id,
@@ -22,28 +23,64 @@ function Comment({
     createdAt,
     authorId,
     author,
+    likes,
 }: CommentWithChildren) {
     const session = useSession();
+    const ctx = trpc.useContext();
+    const router = useRouter();
     const [postId] = useAtom(PostIdAtom);
     const [autoAnimate] = useAutoAnimate<HTMLLIElement>();
     const [isReplying, setIsReplying] = useState(false);
 
-    const { data: likes, refetch: refetchLikes } =
-        trpc.likes.listFromComment.useQuery({
-            commentId: id,
-        });
-
-    function handleRefetchLikes() {
-        refetchLikes();
+    function handleInvalidateComments() {
+        ctx.comments.list.invalidate({ postId });
     }
 
     const { mutate: likeComment } = trpc.likes.addToComment.useMutation({
-        onSuccess: handleRefetchLikes,
+        onSuccess: handleInvalidateComments,
     });
 
     const { mutate: unlikeComment } = trpc.likes.removeFromComment.useMutation({
-        onSuccess: handleRefetchLikes,
+        onSuccess: handleInvalidateComments,
     });
+
+    const { mutate: deleteComment } = trpc.comments.delete.useMutation({
+        onSuccess: () => {
+            ctx.comments.list.invalidate({ postId });
+        },
+    });
+
+    function handleAddLike() {
+        if (session.status === "unauthenticated") {
+            router.push("/login");
+            return;
+        }
+        likeComment({ commentId: id });
+    }
+
+    function handleRemoveLike() {
+        if (session.status === "unauthenticated") {
+            router.push("/login");
+            return;
+        }
+        unlikeComment({ commentId: id });
+    }
+
+    function handleDeleteComment() {
+        if (session.status === "unauthenticated") {
+            router.push("/login");
+            return;
+        }
+        deleteComment({ commentId: id });
+    }
+
+    function handleEditComment() {
+        if (session.status === "unauthenticated") {
+            router.push("/login");
+            return;
+        }
+        setIsReplying(true);
+    }
 
     const isOwner = session?.data?.user?.id === authorId;
     const userHasLiked =
@@ -53,12 +90,8 @@ function Comment({
     return (
         <div className="flex">
             <Likes
-                handleAddLike={async () => {
-                    likeComment(id);
-                }}
-                handleRemoveLike={async () => {
-                    unlikeComment(id);
-                }}
+                handleAddLike={handleAddLike}
+                handleRemoveLike={handleRemoveLike}
                 likesCount={likes?.length ?? 0}
                 userHasLiked={userHasLiked}
             />
@@ -82,6 +115,7 @@ function Comment({
                                     <Menu.Item>
                                         {({ active }) => (
                                             <button
+                                                onClick={handleEditComment}
                                                 className={`mx-2 flex items-center gap-2 rounded-md px-2 py-1 ${
                                                     active && "bg-gray-100"
                                                 }`}
@@ -93,6 +127,7 @@ function Comment({
                                     <Menu.Item>
                                         {({ active }) => (
                                             <button
+                                                onClick={handleDeleteComment}
                                                 className={`mx-2 flex items-center gap-2 rounded-md px-2 py-1 ${
                                                     active && "bg-gray-100"
                                                 }`}

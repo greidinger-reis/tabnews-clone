@@ -31,7 +31,7 @@ export function CommentForm({
     setIsReplying?: (value: boolean) => void;
 }) {
     const [preview, setPreview] = useState(false);
-    const { ref, commandController } = useTextAreaMarkdownEditor({
+    const { ref } = useTextAreaMarkdownEditor({
         commandMap: {
             h2: headingLevel2Command,
             h3: headingLevel3Command,
@@ -140,7 +140,9 @@ export function CommentForm({
                 </div>
             )}
             <div className="ml-auto mt-4 flex gap-4 text-sm">
-                <button>Cancelar</button>
+                <button onClick={() => setIsReplying && setIsReplying(false)}>
+                    Cancelar
+                </button>
                 <button
                     onClick={form.handleSubmit(submitComment)}
                     className="btn-sm-green font-medium text-white"

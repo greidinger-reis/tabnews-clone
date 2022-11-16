@@ -1,4 +1,3 @@
-import { publicProcedure } from "./../trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
@@ -51,31 +50,17 @@ export const likeRouter = router({
             });
         }),
 
-    listFromComment: publicProcedure
-        .input(
-            z.object({
-                commentId: z.string(),
-            })
-        )
-        .query(({ input, ctx }) => {
-            const { commentId } = input;
-            return ctx.prisma.like.findMany({
-                where: {
-                    commentId,
-                },
-            });
-        }),
-
     addToComment: protectedProcedure
-        .input(z.string())
+        .input(z.object({ commentId: z.string() }))
         .mutation(async ({ ctx, input }) => {
+            const { commentId } = input;
             const authorId = ctx.session?.user?.id;
             return await ctx.prisma.like
                 .create({
                     data: {
                         Comment: {
                             connect: {
-                                id: input,
+                                id: commentId,
                             },
                         },
                         User: {
@@ -95,13 +80,14 @@ export const likeRouter = router({
         }),
 
     removeFromComment: protectedProcedure
-        .input(z.string())
+        .input(z.object({ commentId: z.string() }))
         .mutation(async ({ ctx, input }) => {
+            const { commentId } = input;
             const userId = ctx.session?.user?.id;
             return await ctx.prisma.like
                 .deleteMany({
                     where: {
-                        commentId: input,
+                        commentId,
                         userId,
                     },
                 })
