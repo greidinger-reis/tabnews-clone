@@ -53,6 +53,21 @@ export const postRouter = router({
                 nextCursor,
             };
         }),
+
+    listPaths: publicProcedure.query(async ({ ctx }) => {
+        const paths = await ctx.prisma.post.findMany({
+            select: {
+                author: {
+                    select: {
+                        username: true,
+                    },
+                },
+                slug: true,
+            },
+        });
+        return paths;
+    }),
+
     find: publicProcedure
         .input(z.object({ slug: z.string(), username: z.string() }))
         .query(async ({ input, ctx }) => {

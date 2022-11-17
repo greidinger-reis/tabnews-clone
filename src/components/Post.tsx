@@ -13,6 +13,7 @@ type PostQueryOutput = Outputs["posts"]["find"];
 export function Post({ post }: { post: PostQueryOutput }) {
     const session = useSession();
     const router = useRouter();
+
     const trpcContext = trpc.useContext();
     const addLike = trpc.likes.addToPost.useMutation();
     const removeLike = trpc.likes.removeFromPost.useMutation();

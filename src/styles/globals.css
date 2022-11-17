@@ -7,6 +7,15 @@
         monospace;
 }
 
+.triangle {
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 0 8px 7px 8px;
+    transform: rotate(180deg);
+    @apply border-transparent border-b-zinc-800;
+}
+
 .btn {
     @apply flex items-center justify-center rounded-md border border-zinc-700/50 bg-zinc-600 px-4 py-[5px] transition-all hover:bg-zinc-700;
 }

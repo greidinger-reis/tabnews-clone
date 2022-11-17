@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import Nodemailer from "nodemailer";
 import { env } from "~/env/server.mjs";
 import type { Options } from "nodemailer/lib/mailer";
