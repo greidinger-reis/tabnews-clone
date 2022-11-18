@@ -12,6 +12,7 @@ interface PostListProps {
 }
 
 export function PostList({ userName, recents }: PostListProps) {
+    const ctx = trpc.useContext();
     const postScoreMap = new Map<string, number>();
 
     const [isLoadMoreVisible, ref] = useIsIntersecting<HTMLDivElement>();
@@ -64,6 +65,17 @@ export function PostList({ userName, recents }: PostListProps) {
                                 <Link
                                     className="font-medium visited:text-zinc-400 hover:underline"
                                     href={`/${post.author.username}/${post.slug}`}
+                                    onMouseEnter={async () => {
+                                        await ctx.posts.find.prefetch(
+                                            {
+                                                slug: post.slug,
+                                                username: post.author.username,
+                                            },
+                                            {
+                                                staleTime: 1000 * 60 * 60,
+                                            }
+                                        );
+                                    }}
                                 >
                                     {post.title}
                                 </Link>

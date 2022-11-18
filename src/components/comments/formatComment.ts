@@ -13,7 +13,6 @@ function setMapAndInitChildren(comments: Comment[]) {
 }
 
 export function formatComments(comments: Comment[]): CommentWithChildren[] {
-    const initTime = Date.now();
     const roots: CommentWithChildren[] = [];
     const map = setMapAndInitChildren(comments);
 
@@ -42,6 +41,5 @@ export function formatComments(comments: Comment[]): CommentWithChildren[] {
     // sort the roots by likes
     const sortedRoots = roots.sort((a, b) => b.likes.length - a.likes.length);
 
-    console.log(`formatComments took ${Date.now() - initTime}ms`);
     return sortedRoots;
 }
