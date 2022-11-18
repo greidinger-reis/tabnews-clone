@@ -34,6 +34,8 @@ import { Tooltip } from "../Tooltip";
 import { IoCloseOutline } from "react-icons/io5";
 import { Transition } from "@headlessui/react";
 import { HelpTabItem, helpTabItems, helpTabShortcuts } from "../HelpTabIcons";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export function CommentForm({
     postId,
@@ -48,6 +50,8 @@ export function CommentForm({
     isReplying: boolean;
     setIsReplying: Dispatch<SetStateAction<boolean>>;
 }) {
+    const session = useSession();
+    const router = useRouter();
     const [fullscreen, setFullscreen] = useState(false);
     const [help, setHelp] = useState(false);
     const [autoAnimate] = useAutoAnimate<HTMLDivElement>();
@@ -221,7 +225,13 @@ export function CommentForm({
                     className={`btn-gray my-2 w-fit text-sm font-medium ${
                         replyingToPost && "ml-1 sm:ml-0"
                     }`}
-                    onClick={() => setIsReplying(!isReplying)}
+                    onClick={() => {
+                        if (session.status === "unauthenticated") {
+                            router.push("/login");
+                            return;
+                        }
+                        setIsReplying(!isReplying);
+                    }}
                 >
                     Responder
                 </button>
