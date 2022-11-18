@@ -13,6 +13,7 @@ interface PostListProps {
 
 export function PostList({ userName, recents }: PostListProps) {
     const ctx = trpc.useContext();
+
     const postScoreMap = new Map<string, number>();
 
     const [isLoadMoreVisible, ref] = useIsIntersecting<HTMLDivElement>();
@@ -29,6 +30,25 @@ export function PostList({ userName, recents }: PostListProps) {
 
     const fetchNextPageRef = useRef(query.fetchNextPage);
     fetchNextPageRef.current = query.fetchNextPage;
+
+    async function handlePrefetchPost(
+        slug: string,
+        postId: string,
+        username: string
+    ) {
+        await ctx.posts.find.prefetch(
+            {
+                slug,
+                username,
+            },
+            {
+                staleTime: Infinity,
+            }
+        );
+        await ctx.comments.list.prefetch({
+            postId,
+        });
+    }
 
     useEffect(() => {
         if (isLoadMoreVisible && query.hasNextPage && !query.isFetching) {
@@ -65,17 +85,13 @@ export function PostList({ userName, recents }: PostListProps) {
                                 <Link
                                     className="font-medium visited:text-zinc-400 hover:underline"
                                     href={`/${post.author.username}/${post.slug}`}
-                                    onMouseEnter={async () => {
-                                        await ctx.posts.find.prefetch(
-                                            {
-                                                slug: post.slug,
-                                                username: post.author.username,
-                                            },
-                                            {
-                                                staleTime: 1000 * 60 * 60,
-                                            }
-                                        );
-                                    }}
+                                    onMouseEnter={() =>
+                                        handlePrefetchPost(
+                                            post.slug,
+                                            post.id,
+                                            post.author.username
+                                        )
+                                    }
                                 >
                                     {post.title}
                                 </Link>
