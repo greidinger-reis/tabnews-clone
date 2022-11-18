@@ -7,6 +7,8 @@ import { formatComments } from "~/components/comments/formatComment";
 import { useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import Spinner from "~/components/Spinner";
+import { HEADER_HEIGHT } from "../_app";
 
 export const PostIdAtom = atom("");
 
@@ -44,6 +46,14 @@ export default function PostPage() {
                 <title>{query.data?.title}</title>
             </Head>
             <div>
+                {query.isLoading && (
+                    <div
+                        className="flex w-full items-center justify-center"
+                        style={{ height: `calc(100vh - ${HEADER_HEIGHT})` }}
+                    >
+                        <Spinner />
+                    </div>
+                )}
                 {query.data && (
                     <div className="space-y-4">
                         <Post post={query.data} />
