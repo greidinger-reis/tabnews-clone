@@ -7,6 +7,7 @@ import {
     useState,
     type Dispatch,
     type SetStateAction,
+    Fragment,
 } from "react";
 import { useForm } from "react-hook-form";
 import { IoWarning } from "react-icons/io5";
@@ -30,7 +31,9 @@ import { trpc } from "~/utils/trpc";
 import { RiFullscreenLine } from "react-icons/ri";
 import { MdOutlineHelpCenter } from "react-icons/md";
 import { Tooltip } from "../Tooltip";
-import { AiOutlineClose } from "react-icons/ai";
+import { IoCloseOutline } from "react-icons/io5";
+import { Transition } from "@headlessui/react";
+import { HelpTabItem, helpTabItems, helpTabShortcuts } from "../HelpTabIcons";
 
 export function CommentForm({
     postId,
@@ -235,27 +238,40 @@ function HelpTab({
     setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
     return (
-        <div
-            className={classNames(
-                "absolute top-0 flex h-full flex-col bg-white",
-                {
-                    "-right-full": !open,
-                    "right-0": open,
-                }
-            )}
+        <Transition
+            show={open}
+            as={Fragment}
+            // open from right to left
+            enter="transition ease-out duration-300 transform"
+            enterFrom="translate-x-full opacity-0"
+            enterTo="translate-x-0 opacity-100"
+            // close from left to right
+            leave="transition ease-in duration-300 transform"
+            leaveFrom="translate-x-0 opacity-100"
+            leaveTo="translate-x-full opacity-0"
         >
-            <div>
-                <strong>Referência de Markdown</strong>
-                <button onClick={() => setOpen(false)}>
-                    <AiOutlineClose />
+            <div className="absolute top-0 right-0 h-full bg-white">
+                <button
+                    className="absolute top-2 right-2"
+                    onClick={() => setOpen(false)}
+                >
+                    <IoCloseOutline size={24} />
                 </button>
+                <div className="flex flex-col border-l p-4">
+                    <h2 className="my-4 font-medium">Referência de Markdown</h2>
+                    <ul className="space-y-2">
+                        {helpTabItems.map((item, i) => (
+                            <HelpTabItem key={i} {...item} />
+                        ))}
+                    </ul>
+                    <h2 className="my-4 font-medium">Atalhos</h2>
+                    <ul className="space-y-2">
+                        {helpTabShortcuts.map((item, i) => (
+                            <HelpTabItem key={i} {...item} />
+                        ))}
+                    </ul>
+                </div>
             </div>
-            <ul>
-                <li>
-                    <span>Cabeçalho 1</span>
-                    <span># cabeçalho</span>
-                </li>
-            </ul>
-        </div>
+        </Transition>
     );
 }

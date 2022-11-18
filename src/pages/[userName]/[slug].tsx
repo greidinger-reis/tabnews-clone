@@ -16,6 +16,7 @@ import superjson from "superjson";
 import { appRouter } from "~/server/trpc/router/_app";
 import { createContextInner } from "~/server/trpc/context";
 import type { DehydratedState } from "@tanstack/react-query";
+import Head from "next/head";
 
 export const PostIdAtom = atom("");
 
@@ -91,27 +92,32 @@ export default function PostPage({
     const { data: comments } = trpc.comments.list.useQuery({ postId });
 
     return (
-        <div>
-            {query.data && (
-                <div className="space-y-4">
-                    <Post post={query.data} />
-                    <div className="mx-2 max-w-4xl rounded-md border border-zinc-300 py-4 px-3 sm:mx-auto sm:px-6">
-                        <CommentForm
-                            replyingToPost={true}
-                            isReplying={isReplying}
-                            setIsReplying={setIsReplying}
-                            postId={query.data.id}
-                        />
-                    </div>
-                    {comments && (
-                        <div className="mx-auto max-w-4xl">
-                            <CommentList
-                                comments={formatComments(comments || [])}
+        <>
+            <Head>
+                <title>{query.data?.title}</title>
+            </Head>
+            <div>
+                {query.data && (
+                    <div className="space-y-4">
+                        <Post post={query.data} />
+                        <div className="mx-2 max-w-4xl rounded-md border border-zinc-300 py-4 px-3 sm:mx-auto sm:px-6">
+                            <CommentForm
+                                replyingToPost={true}
+                                isReplying={isReplying}
+                                setIsReplying={setIsReplying}
+                                postId={query.data.id}
                             />
                         </div>
-                    )}
-                </div>
-            )}
-        </div>
+                        {comments && (
+                            <div className="mx-auto max-w-4xl">
+                                <CommentList
+                                    comments={formatComments(comments || [])}
+                                />
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+        </>
     );
 }
