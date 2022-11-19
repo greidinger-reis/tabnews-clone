@@ -37,28 +37,29 @@ export const getServerSideProps: GetServerSideProps<{
 
     const { userName, slug } = ctx.query as unknown as RouterParams;
 
-    const post = await ssg.posts.find.fetch({
-        slug,
-        username: userName,
-    });
+    try {
+        const post = await ssg.posts.find.fetch({
+            slug,
+            username: userName,
+        });
 
-    if (!post)
+        const { id } = post;
+
+        await ssg.comments.list.fetch({
+            postId: id,
+        });
+
+        return {
+            props: {
+                post: { id, slug, userName },
+                trpcState: ssg.dehydrate(),
+            },
+        };
+    } catch {
         return {
             notFound: true,
         };
-
-    const { id } = post;
-
-    await ssg.comments.list.fetch({
-        postId: id,
-    });
-
-    return {
-        props: {
-            post: { id, slug, userName },
-            trpcState: ssg.dehydrate(),
-        },
-    };
+    }
 };
 
 export default function PostPage({
