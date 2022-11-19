@@ -83,7 +83,7 @@ export function PostList({ userName, recents }: PostListProps) {
                             </span>
                             <div className="ml-2">
                                 <Link
-                                    className="font-medium visited:text-zinc-400 hover:underline"
+                                    className="font-medium visited:text-zinc-500 hover:underline"
                                     href={`/${post.author.username}/${post.slug}`}
                                     onMouseEnter={() =>
                                         handlePrefetchPost(

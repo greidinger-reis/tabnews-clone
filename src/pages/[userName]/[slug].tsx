@@ -6,63 +6,97 @@ import { atom, useAtom } from "jotai";
 import { formatComments } from "~/components/comments/formatComment";
 import { useState } from "react";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import Spinner from "~/components/Spinner";
-import { HEADER_HEIGHT } from "../_app";
-
-export const PostIdAtom = atom("");
+import type {
+    GetServerSideProps,
+    GetServerSidePropsContext,
+    InferGetServerSidePropsType,
+} from "next";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { appRouter } from "~/server/trpc/router/_app";
+import { createContextInner } from "~/server/trpc/context";
+import superjson from "superjson";
+import type { DehydratedState } from "@tanstack/react-query";
 
 interface RouterParams {
     userName: string;
     slug: string;
 }
 
-export default function PostPage() {
-    const router = useRouter();
-    const { slug, userName } = router.query as unknown as RouterParams;
-    const [postId, setPostId] = useAtom(PostIdAtom);
+export const PostIdAtom = atom("");
+
+// only load the page when the query is ready
+export const getServerSideProps: GetServerSideProps<{
+    post: { id: string; slug: string; userName: string };
+    trpcState: DehydratedState;
+}> = async (ctx: GetServerSidePropsContext) => {
+    const ssg = createProxySSGHelpers({
+        router: appRouter,
+        ctx: await createContextInner({ session: null }),
+        transformer: superjson,
+    });
+
+    const { userName, slug } = ctx.query as unknown as RouterParams;
+
+    const post = await ssg.posts.find.fetch({
+        slug,
+        username: userName,
+    });
+
+    if (!post)
+        return {
+            notFound: true,
+        };
+
+    const { id } = post;
+
+    await ssg.comments.list.fetch({
+        postId: id,
+    });
+
+    return {
+        props: {
+            post: { id, slug, userName },
+            trpcState: ssg.dehydrate(),
+        },
+    };
+};
+
+export default function PostPage({
+    post,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+    const { id, slug, userName } = post;
+
+    const [, setPostId] = useAtom(PostIdAtom);
+
     const [isReplying, setIsReplying] = useState(false);
-    const query = trpc.posts.find.useQuery(
+
+    const { data } = trpc.posts.find.useQuery(
         { slug, username: userName },
         {
             onSuccess(data) {
                 if (!data?.id) return;
                 setPostId(data.id);
             },
-            enabled: !!slug && !!userName,
         }
     );
 
-    const { data: comments } = trpc.comments.list.useQuery(
-        { postId },
-        {
-            enabled: !!postId,
-        }
-    );
+    const { data: comments } = trpc.comments.list.useQuery({ postId: id });
 
     return (
         <>
             <Head>
-                <title>{query.data?.title}</title>
+                <title>{data?.title}</title>
             </Head>
             <div>
-                {query.isLoading && (
-                    <div
-                        className="flex w-full items-center justify-center"
-                        style={{ height: `calc(100vh - ${HEADER_HEIGHT})` }}
-                    >
-                        <Spinner />
-                    </div>
-                )}
-                {query.data && (
+                {data && (
                     <div className="space-y-4">
-                        <Post post={query.data} />
+                        <Post post={data} />
                         <div className="mx-2 max-w-4xl rounded-md border border-zinc-300 py-4 px-3 sm:mx-auto sm:px-6">
                             <CommentForm
                                 replyingToPost={true}
                                 isReplying={isReplying}
                                 setIsReplying={setIsReplying}
-                                postId={query.data.id}
+                                postId={id}
                             />
                         </div>
                         {comments && (
