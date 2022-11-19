@@ -14,17 +14,11 @@ import { useForm } from "react-hook-form";
 import { IoWarning } from "react-icons/io5";
 import {
     boldCommand,
-    checkedListCommand,
     codeBlockCommand,
     codeCommand,
-    headingLevel2Command,
-    headingLevel3Command,
-    headingLevel4Command,
     italicCommand,
     linkCommand,
     orderedListCommand,
-    quoteCommand,
-    strikethroughCommand,
     unorderedListCommand,
     useTextAreaMarkdownEditor,
 } from "react-mde";
@@ -37,7 +31,6 @@ import { Transition } from "@headlessui/react";
 import { HelpTabItem, helpTabItems, helpTabShortcuts } from "../HelpTabIcons";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { fi } from "date-fns/locale";
 
 export function CommentForm({
     postId,
@@ -45,32 +38,33 @@ export function CommentForm({
     replyingToPost,
     isReplying,
     setIsReplying,
+    isUpdating,
+    content,
+    id,
 }: {
     postId: string;
     parentId?: string;
     replyingToPost?: boolean;
     isReplying: boolean;
     setIsReplying: Dispatch<SetStateAction<boolean>>;
+    isUpdating?: boolean;
+    content?: string;
+    id?: string;
 }) {
     const session = useSession();
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [fullscreen, setFullscreen] = useState(false);
     const [help, setHelp] = useState(false);
     const [autoAnimate] = useAutoAnimate<HTMLDivElement>();
     const [preview, setPreview] = useState(false);
     const { ref, commandController } = useTextAreaMarkdownEditor({
         commandMap: {
-            h2: headingLevel2Command,
-            h3: headingLevel3Command,
-            h4: headingLevel4Command,
             bold: boldCommand,
             italic: italicCommand,
             link: linkCommand,
-            quote: quoteCommand,
-            strikethrough: strikethroughCommand,
             orderedList: orderedListCommand,
             unorderedList: unorderedListCommand,
-            checkedList: checkedListCommand,
             code: codeCommand,
             codeBlock: codeBlockCommand,
         },
@@ -81,16 +75,38 @@ export function CommentForm({
     const trpcContext = trpc.useContext();
 
     //TODO: Add state transition
-    const { mutate } = trpc.comments.create.useMutation({
+    const { mutateAsync: createComment } = trpc.comments.create.useMutation({
         onSuccess: () => {
             setIsReplying && setIsReplying(false);
+            setIsSubmitting(false);
+            form.reset();
+            trpcContext.comments.list.invalidate({ postId });
+        },
+    });
+
+    const { mutateAsync: updateComment } = trpc.comments.update.useMutation({
+        onSuccess: () => {
+            setIsReplying && setIsReplying(false);
+            setIsSubmitting(false);
             form.reset();
             trpcContext.comments.list.invalidate({ postId });
         },
     });
 
     async function submitComment(data: { content: string }) {
-        mutate({ postId, parentId, content: data.content });
+        setIsSubmitting(true);
+
+        if (isUpdating) {
+            if (!id) return;
+            await updateComment({ id, content: data.content });
+            return;
+        }
+
+        await createComment({
+            postId,
+            parentId,
+            content: data.content,
+        });
     }
 
     function handleShortcuts(e: KeyboardEvent) {
@@ -231,6 +247,7 @@ export function CommentForm({
                                 )}
                             >
                                 <textarea
+                                    defaultValue={(isUpdating && content) || ""}
                                     name="content"
                                     rows={8}
                                     ref={ref}
@@ -266,6 +283,7 @@ export function CommentForm({
                             Cancelar
                         </button>
                         <button
+                            disabled={isSubmitting}
                             onClick={form.handleSubmit(submitComment)}
                             className="btn-sm-green font-medium text-white"
                         >

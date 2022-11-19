@@ -24,6 +24,7 @@ function Comment({
     authorId,
     author,
     likes,
+    hasBeenEdited,
 }: CommentWithChildren) {
     const session = useSession();
     const ctx = trpc.useContext();
@@ -31,6 +32,7 @@ function Comment({
     const [postId] = useAtom(PostIdAtom);
     const [autoAnimate] = useAutoAnimate<HTMLLIElement>();
     const [isReplying, setIsReplying] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     function handleInvalidateComments() {
         ctx.comments.list.invalidate({ postId });
@@ -45,9 +47,7 @@ function Comment({
     });
 
     const { mutate: deleteComment } = trpc.comments.delete.useMutation({
-        onSuccess: () => {
-            ctx.comments.list.invalidate({ postId });
-        },
+        onSuccess: handleInvalidateComments,
     });
 
     function handleAddLike() {
@@ -80,6 +80,7 @@ function Comment({
             return;
         }
         setIsReplying(true);
+        setIsUpdating(true);
     }
 
     const isOwner = session?.data?.user?.id === authorId;
@@ -107,6 +108,9 @@ function Comment({
                         {formatDistance(new Date(createdAt), new Date(), {
                             locale: ptBR,
                         })}
+                    </span>
+                    <span className="text-xs text-zinc-600">
+                        {hasBeenEdited && "(editado)"}
                     </span>
                     {isOwner && (
                         <div className="ml-auto inline">
@@ -158,12 +162,24 @@ function Comment({
                         {content}
                     </Markdown>
                 </div>
-                <CommentForm
-                    postId={postId}
-                    parentId={id}
-                    isReplying={isReplying}
-                    setIsReplying={setIsReplying}
-                />
+                {isUpdating ? (
+                    <CommentForm
+                        postId={postId}
+                        parentId={id}
+                        isReplying={isReplying}
+                        setIsReplying={setIsReplying}
+                        isUpdating={isUpdating}
+                        content={content}
+                        id={id}
+                    />
+                ) : (
+                    <CommentForm
+                        postId={postId}
+                        parentId={id}
+                        isReplying={isReplying}
+                        setIsReplying={setIsReplying}
+                    />
+                )}
                 {children && children.length > 0 && (
                     <CommentList comments={children} />
                 )}

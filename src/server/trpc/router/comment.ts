@@ -77,6 +77,7 @@ export const commentRouter = router({
                     });
                 });
         }),
+
     delete: protectedProcedure
         .input(
             z.object({
@@ -97,5 +98,25 @@ export const commentRouter = router({
                         message: `Something went wrong deleting the comment (${err.message})`,
                     });
                 });
+        }),
+
+    update: protectedProcedure
+        .input(
+            z.object({
+                id: z.string(),
+                content: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { id, content } = input;
+            return await ctx.prisma.comment.update({
+                where: {
+                    id,
+                },
+                data: {
+                    content,
+                    hasBeenEdited: true,
+                },
+            });
         }),
 });
