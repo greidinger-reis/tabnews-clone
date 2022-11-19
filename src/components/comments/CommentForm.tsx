@@ -2,12 +2,13 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import classNames from "classnames";
 import Markdown from "markdown-to-jsx";
 import {
-    type ChangeEvent,
+    Fragment,
     useEffect,
     useState,
+    type ChangeEvent,
     type Dispatch,
     type SetStateAction,
-    Fragment,
+    type KeyboardEvent,
 } from "react";
 import { useForm } from "react-hook-form";
 import { IoWarning } from "react-icons/io5";
@@ -36,6 +37,7 @@ import { Transition } from "@headlessui/react";
 import { HelpTabItem, helpTabItems, helpTabShortcuts } from "../HelpTabIcons";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { fi } from "date-fns/locale";
 
 export function CommentForm({
     postId,
@@ -56,7 +58,7 @@ export function CommentForm({
     const [help, setHelp] = useState(false);
     const [autoAnimate] = useAutoAnimate<HTMLDivElement>();
     const [preview, setPreview] = useState(false);
-    const { ref } = useTextAreaMarkdownEditor({
+    const { ref, commandController } = useTextAreaMarkdownEditor({
         commandMap: {
             h2: headingLevel2Command,
             h3: headingLevel3Command,
@@ -91,6 +93,45 @@ export function CommentForm({
         mutate({ postId, parentId, content: data.content });
     }
 
+    function handleShortcuts(e: KeyboardEvent) {
+        if (e.ctrlKey) {
+            switch (e.key) {
+                case "b":
+                    e.preventDefault();
+                    commandController.executeCommand("bold");
+                    break;
+                case "i":
+                    e.preventDefault();
+                    commandController.executeCommand("italic");
+                    break;
+                case "k":
+                    e.preventDefault();
+                    commandController.executeCommand("link");
+                    break;
+            }
+        }
+        if (e.ctrlKey && e.shiftKey) {
+            switch (e.key) {
+                case "K":
+                    e.preventDefault();
+                    commandController.executeCommand("code");
+                    break;
+                case "C":
+                    e.preventDefault();
+                    commandController.executeCommand("codeBlock");
+                    break;
+                case "U":
+                    e.preventDefault();
+                    commandController.executeCommand("unorderedList");
+                    break;
+                case "O":
+                    e.preventDefault();
+                    commandController.executeCommand("orderedList");
+                    break;
+            }
+        }
+    }
+
     useEffect(() => {
         form.register("content", { required: true });
     });
@@ -118,7 +159,14 @@ export function CommentForm({
                                 !form.formState.errors.content,
                         })}
                     >
-                        <div className="flex items-center justify-between rounded-t-md border-b border-zinc-300 bg-gray-100 px-4 py-2 text-sm">
+                        <div
+                            className={classNames(
+                                "flex items-center justify-between  border-b border-zinc-300 bg-gray-100 px-4 py-2 text-sm",
+                                {
+                                    "rounded-t-md": !fullscreen,
+                                }
+                            )}
+                        >
                             <div className="space-x-3">
                                 <button
                                     className={`transition-all ${
@@ -174,7 +222,7 @@ export function CommentForm({
                                     {form.getValues("content") ?? ""}
                                 </Markdown>
                             </div>
-                            <form
+                            <div
                                 className={classNames(
                                     "flex h-full flex-col gap-4",
                                     {
@@ -186,7 +234,7 @@ export function CommentForm({
                                     name="content"
                                     rows={8}
                                     ref={ref}
-                                    className="bg-base-100 h-full resize-none rounded-b-md p-4 font-mono text-sm outline-none"
+                                    className="h-full resize-none rounded-b-md p-4 font-mono text-sm outline-none"
                                     onChange={(
                                         e: ChangeEvent<HTMLTextAreaElement>
                                     ) => {
@@ -195,9 +243,14 @@ export function CommentForm({
                                             e.target.value
                                         );
                                     }}
+                                    onKeyDown={handleShortcuts}
                                 />
-                            </form>
-                            <HelpTab open={help} setOpen={setHelp} />
+                            </div>
+                            <HelpTab
+                                open={help}
+                                setOpen={setHelp}
+                                fullscreen={fullscreen}
+                            />
                         </div>
                     </div>
                     {form.formState.errors.content && (
@@ -243,9 +296,11 @@ export function CommentForm({
 function HelpTab({
     open,
     setOpen,
+    fullscreen,
 }: {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
+    fullscreen: boolean;
 }) {
     return (
         <Transition
@@ -260,15 +315,17 @@ function HelpTab({
             leaveFrom="translate-x-0 opacity-100"
             leaveTo="translate-x-full opacity-0"
         >
-            <div className="absolute top-0 right-0 h-full bg-white">
-                <button
-                    className="absolute top-2 right-2"
-                    onClick={() => setOpen(false)}
+            <div className="absolute top-0 right-0 bg-white">
+                <div
+                    className={classNames("flex flex-col border-l p-4", {
+                        "h-full": fullscreen,
+                        "h-48 overflow-y-scroll": !fullscreen,
+                    })}
                 >
-                    <IoCloseOutline size={24} />
-                </button>
-                <div className="flex flex-col border-l p-4">
-                    <h2 className="my-4 font-medium">Referência de Markdown</h2>
+                    <button className="ml-auto" onClick={() => setOpen(false)}>
+                        <IoCloseOutline size={24} />
+                    </button>
+                    <h2 className="mb-4 font-medium">Referência de Markdown</h2>
                     <ul className="space-y-2">
                         {helpTabItems.map((item, i) => (
                             <HelpTabItem key={i} {...item} />

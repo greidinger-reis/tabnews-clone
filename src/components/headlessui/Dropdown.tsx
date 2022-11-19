@@ -8,7 +8,7 @@ interface DropdownProps {
 
 export default function Dropdown(props: DropdownProps) {
     return (
-        <Menu as="div" className="relative z-10 text-left">
+        <Menu as="div" className="relative text-left">
             <Menu.Button>{props.button}</Menu.Button>
             <Transition
                 as={Fragment}
