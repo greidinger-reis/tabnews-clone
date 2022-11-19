@@ -27,7 +27,7 @@ function Comment({
     hasBeenEdited,
 }: CommentWithChildren) {
     const session = useSession();
-    const ctx = trpc.useContext();
+    const trpcContext = trpc.useContext();
     const router = useRouter();
     const [postId] = useAtom(PostIdAtom);
     const [autoAnimate] = useAutoAnimate<HTMLLIElement>();
@@ -35,7 +35,8 @@ function Comment({
     const [isUpdating, setIsUpdating] = useState(false);
 
     function handleInvalidateComments() {
-        ctx.comments.list.invalidate({ postId });
+        console.log("invalidating comments of post", postId);
+        trpcContext.comments.list.invalidate({ postId });
     }
 
     const { mutate: likeComment } = trpc.likes.addToComment.useMutation({

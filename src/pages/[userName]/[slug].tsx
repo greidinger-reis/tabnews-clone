@@ -75,7 +75,6 @@ export default function PostPage({
         { slug, username: userName },
         {
             onSuccess(data) {
-                if (!data?.id) return;
                 setPostId(data.id);
             },
         }
