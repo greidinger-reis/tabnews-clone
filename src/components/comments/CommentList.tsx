@@ -35,7 +35,6 @@ function Comment({
     const [isUpdating, setIsUpdating] = useState(false);
 
     function handleInvalidateComments() {
-        console.log("invalidating comments of post", postId);
         trpcContext.comments.list.invalidate({ postId });
     }
 

@@ -80,7 +80,6 @@ export function CommentForm({
             setIsReplying && setIsReplying(false);
             setIsSubmitting(false);
             form.reset();
-            console.log("invalidating comment list of post:", postId);
             trpcContext.comments.list.invalidate({ postId });
         },
     });
