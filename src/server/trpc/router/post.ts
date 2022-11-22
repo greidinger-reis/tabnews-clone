@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { publicProcedure, router } from "./../trpc";
+import slugify from "~/utils/slugify";
+import { protectedProcedure, publicProcedure, router } from "./../trpc";
 
 export const postRouter = router({
     list: publicProcedure
@@ -89,6 +90,26 @@ export const postRouter = router({
                         select: {
                             Comment: true,
                             Likes: true,
+                        },
+                    },
+                },
+            });
+        }),
+
+    create: protectedProcedure
+        .input(z.object({ title: z.string(), content: z.string() }))
+        .mutation(async ({ input, ctx }) => {
+            const { title, content } = input;
+            const userId = ctx.session?.user?.id;
+
+            return await ctx.prisma.post.create({
+                data: {
+                    title,
+                    slug: slugify(title),
+                    content,
+                    author: {
+                        connect: {
+                            id: userId,
                         },
                     },
                 },

@@ -8,7 +8,7 @@
 	Original Author: Mathew Byrne - https://gist.github.com/mathewbyrne/1280286
  */
 
-function slugify(text: string) {
+export function slugify(text: string) {
     return text
         .toString()
         .toLowerCase()
