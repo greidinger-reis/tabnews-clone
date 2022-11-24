@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Editor } from "./Editor";
+import { CommentEditor } from "./Editor/CommentEditor";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { formatDistance } from "date-fns";
 import { trpc } from "~/utils/trpc";
@@ -163,7 +163,7 @@ function Comment({
                     </Markdown>
                 </div>
                 {isUpdating ? (
-                    <Editor
+                    <CommentEditor
                         postId={postId}
                         parentId={id}
                         isReplying={isReplying}
@@ -173,7 +173,7 @@ function Comment({
                         id={id}
                     />
                 ) : (
-                    <Editor
+                    <CommentEditor
                         postId={postId}
                         parentId={id}
                         isReplying={isReplying}

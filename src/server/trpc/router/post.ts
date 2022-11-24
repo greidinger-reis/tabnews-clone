@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import slugify from "~/utils/slugify";
 import { protectedProcedure, publicProcedure, router } from "./../trpc";
@@ -97,16 +98,37 @@ export const postRouter = router({
         }),
 
     create: protectedProcedure
-        .input(z.object({ title: z.string(), content: z.string() }))
+        .input(
+            z.object({
+                title: z.string(),
+                content: z.string(),
+                source: z.string().nullable(),
+            })
+        )
         .mutation(async ({ input, ctx }) => {
-            const { title, content } = input;
+            const { title, content, source } = input;
             const userId = ctx.session?.user?.id;
+
+            const postExists = await ctx.prisma.post.findFirst({
+                where: {
+                    authorId: userId,
+                    title,
+                },
+            });
+
+            if (postExists) {
+                throw new TRPCError({
+                    code: "CONFLICT",
+                    message: "Você já possui um post com esse título",
+                });
+            }
 
             return await ctx.prisma.post.create({
                 data: {
                     title,
                     slug: slugify(title),
                     content,
+                    source,
                     author: {
                         connect: {
                             id: userId,

@@ -1,11 +1,10 @@
 import {
-    type Dispatch,
-    type SetStateAction,
-    useEffect,
     useReducer,
+    type Dispatch,
     type KeyboardEventHandler,
+    type SetStateAction,
 } from "react";
-import { useForm } from "react-hook-form";
+import { type UseFormReturn } from "react-hook-form";
 import {
     boldCommand,
     codeBlockCommand,
@@ -16,22 +15,30 @@ import {
     unorderedListCommand,
     useTextAreaMarkdownEditor,
 } from "react-mde";
+import type { PostFormData } from "~/pages/publicar";
 import { trpc } from "~/utils/trpc";
+import type { CommentFormData } from "../CommentEditor";
 import { editorReducer, INITIAL_STATE } from "./reducer";
 
-export function useEditor({
-    postId,
-    parentId,
-    setIsReplying,
-    isUpdating,
-    commentId,
-}: {
-    postId: string;
-    parentId?: string;
-    setIsReplying: Dispatch<SetStateAction<boolean>>;
-    isUpdating?: boolean;
-    commentId?: string;
-}) {
+export type EditorProps = {
+    commentEditor?: {
+        postId: string;
+        parentId?: string;
+        setIsReplying: Dispatch<SetStateAction<boolean>>;
+        isUpdating?: boolean;
+        commentId?: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        commentForm: UseFormReturn<CommentFormData, any>;
+    };
+    postEditor?: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        postForm: UseFormReturn<PostFormData, any>;
+    };
+};
+
+export function useEditor({ commentEditor, postEditor }: EditorProps) {
+    const trpcContext = trpc.useContext();
+
     const [editorState, dispatchEditorState] = useReducer(
         editorReducer,
         INITIAL_STATE
@@ -49,45 +56,60 @@ export function useEditor({
         },
     });
 
-    const form = useForm<{
-        content: string;
-    }>();
-
-    const trpcContext = trpc.useContext();
-
-    //TODO: Add state transition
     const { mutateAsync: createComment } = trpc.comments.create.useMutation({
         onSuccess: () => {
-            setIsReplying(false);
+            if (!commentEditor) return;
+            commentEditor?.setIsReplying(false);
             dispatchEditorState({ type: "TOGGLE_IS_SUBMITTING" });
-            form.reset();
-            trpcContext.comments.list.invalidate({ postId });
+            commentEditor.commentForm.reset();
+            trpcContext.comments.list.invalidate({
+                postId: commentEditor.postId,
+            });
         },
     });
 
     const { mutateAsync: updateComment } = trpc.comments.update.useMutation({
         onSuccess: () => {
-            setIsReplying(false);
+            if (!commentEditor) return;
+            commentEditor?.setIsReplying(false);
             dispatchEditorState({ type: "TOGGLE_IS_SUBMITTING" });
-            form.reset();
-            console.log("invalidating comment list of post:", postId);
-            trpcContext.comments.list.invalidate({ postId });
+            commentEditor.commentForm.reset();
+            trpcContext.comments.list.invalidate({
+                postId: commentEditor.postId,
+            });
         },
     });
 
-    async function submitComment(data: { content: string }) {
+    async function submitComment(data: CommentFormData) {
         dispatchEditorState({ type: "TOGGLE_IS_SUBMITTING" });
 
-        if (isUpdating) {
-            if (!commentId) return;
-            await updateComment({ id: commentId, content: data.content });
+        if (commentEditor?.isUpdating) {
+            if (!commentEditor.commentId) return;
+            await updateComment({
+                id: commentEditor.commentId,
+                content: data.content,
+            });
             return;
         }
 
+        if (!commentEditor) return;
+
         await createComment({
-            postId,
-            parentId,
+            postId: commentEditor?.postId,
+            parentId: commentEditor?.parentId,
             content: data.content,
+        });
+    }
+
+    const { mutateAsync: createPost } = trpc.posts.create.useMutation();
+
+    async function submitPost(data: PostFormData) {
+        !editorState.isSubmitting &&
+            dispatchEditorState({ type: "TOGGLE_IS_SUBMITTING" });
+        await createPost({
+            content: data.content,
+            title: data.title,
+            source: data.source,
         });
     }
 
@@ -132,16 +154,16 @@ export function useEditor({
         }
     };
 
-    useEffect(() => {
-        form.register("content", { required: true });
-    });
-
     return {
-        form,
+        commentForm: commentEditor?.commentForm,
+        postForm: postEditor?.postForm,
         MDERef,
         editorState,
         handleShortcuts,
         submitComment,
+        submitPost,
         dispatchEditorState,
     };
 }
+
+export type UseEditor = ReturnType<typeof useEditor>;
