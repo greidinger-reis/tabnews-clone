@@ -174,12 +174,13 @@ export function Editor({
                     <HelpTab
                         open={editor?.editorState.isHelpTabShown ?? false}
                         setOpen={() => {
-                            !editor?.editorState.isHelpTabShown &&
+                            editor?.editorState.isHelpTabShown &&
                                 editor?.dispatchEditorState({
                                     type: "TOGGLE_HELP_TAB",
                                 });
                         }}
                         fullscreen={editor?.editorState.isFullscreen ?? false}
+                        isPostEditor={editor?.postForm ? true : false}
                     />
                 </div>
             </div>
@@ -218,10 +219,12 @@ function HelpTab({
     open,
     setOpen,
     fullscreen,
+    isPostEditor,
 }: {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     fullscreen: boolean;
+    isPostEditor: boolean;
 }) {
     return (
         <Transition
@@ -241,6 +244,8 @@ function HelpTab({
                     className={classNames("flex flex-col border-l p-4", {
                         "h-full": fullscreen,
                         "h-48 overflow-y-scroll": !fullscreen,
+                        "h-[350px] overflow-y-scroll":
+                            !fullscreen && isPostEditor,
                     })}
                 >
                     <button className="ml-auto" onClick={() => setOpen(false)}>
