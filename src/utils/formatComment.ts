@@ -1,4 +1,4 @@
-import type { Comment, CommentWithChildren } from "~/types/trpc";
+import type { Comment, CommentWithChildren } from "~/components/comments/types";
 
 function setMapAndInitChildren(comments: Comment[]) {
     const map = new Map<string, number>();
