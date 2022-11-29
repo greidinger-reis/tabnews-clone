@@ -59,7 +59,7 @@ export default function PublicarPage() {
                         placeholder="Título"
                         {...postForm.register("title", { required: true })}
                     />
-                    <Editor editor={{ ...postEditor, replyingToPost: true }} />
+                    <Editor editor={{ ...postEditor, isRootComment: true }} />
                     <PostInput
                         placeholder="Fonte (opcional)"
                         {...postForm.register("source", { required: true })}

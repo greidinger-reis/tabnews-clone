@@ -22,12 +22,6 @@ type CommentEditorProps = {
     commentIdToUpdate?: string;
 } & CommentEditorStateActionsProps;
 
-function useEditorUtils() {
-    const [autoAnimate] = useAutoAnimate<HTMLDivElement>();
-    const commentForm = useForm<CommentFormData>();
-    return { autoAnimate, commentForm };
-}
-
 export function CommentEditor({
     isCommenting,
     setIsCommenting,
@@ -36,7 +30,9 @@ export function CommentEditor({
     commentIdToUpdate,
     contentToUpdate,
 }: CommentEditorProps) {
-    const { autoAnimate, commentForm } = useEditorUtils();
+    const [autoAnimate] = useAutoAnimate<HTMLDivElement>();
+    const commentForm = useForm<CommentFormData>();
+
     const editor = useEditor({
         commentEditor: {
             commentForm,
@@ -50,7 +46,15 @@ export function CommentEditor({
     return (
         <div ref={autoAnimate}>
             {isCommenting ? (
-                <Editor editor={{ ...editor, contentToUpdate }} />
+                <Editor
+                    editor={{
+                        ...editor,
+                        isRootComment,
+                        isCommenting,
+                        setIsCommenting,
+                        contentToUpdate,
+                    }}
+                />
             ) : (
                 <SetIsCommentingButton
                     isCommenting={isCommenting}

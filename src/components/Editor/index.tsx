@@ -1,13 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Transition } from "@headlessui/react";
 import classNames from "classnames";
 import Markdown from "markdown-to-jsx";
 import dynamic from "next/dynamic";
-import {
-    Fragment,
-    type ChangeEvent,
-    type Dispatch,
-    type SetStateAction,
-} from "react";
+import { Fragment, useEffect, type Dispatch, type SetStateAction } from "react";
 import { IoCloseOutline, IoWarning } from "react-icons/io5";
 import { MdOutlineHelpCenter } from "react-icons/md";
 import { RiFullscreenLine } from "react-icons/ri";
@@ -19,30 +15,28 @@ export function Editor({
     editor,
 }: {
     editor?: UseEditor & {
-        replyingToPost?: boolean;
-        isReplying?: boolean;
-        setIsReplying?: Dispatch<SetStateAction<boolean>>;
+        isRootComment?: boolean;
+        isCommenting?: boolean;
+        setIsCommenting?: Dispatch<SetStateAction<boolean>>;
         isUpdating?: boolean;
         contentToUpdate?: string;
     };
 }) {
-    function handleSubmit() {
-        if (editor?.commentForm) {
-            editor.commentForm.handleSubmit(editor?.submitComment);
-            return;
-        }
-    }
-
     const PreBlock = dynamic(() => import("./Code"), { ssr: false });
 
+    useEffect(() => {
+        console.log("asdokasodk");
+        editor?.commentForm?.register("content", { required: true });
+    });
+
     return (
-        <div
+        <form
+            onSubmit={editor?.commentForm?.handleSubmit(editor.submitComment)}
             className={classNames("", {
                 "flex w-full flex-col":
-                    editor?.replyingToPost && !editor.editorState.isFullscreen,
+                    editor?.isRootComment && !editor.editorState.isFullscreen,
                 "rounded-md border border-zinc-300 py-4 px-3 sm:m-2 sm:px-6":
-                    !editor?.replyingToPost &&
-                    !editor?.editorState.isFullscreen,
+                    !editor?.isRootComment && !editor?.editorState.isFullscreen,
 
                 "fixed inset-0 z-10": editor?.editorState.isFullscreen,
             })}
@@ -67,8 +61,8 @@ export function Editor({
                     )}
                 >
                     <div className="space-x-3">
-                        <button
-                            className={`transition-all ${
+                        <span
+                            className={`cursor-pointer transition-all ${
                                 editor?.editorState.isPreviewTabShown
                                     ? ""
                                     : "text-blue-500"
@@ -81,9 +75,9 @@ export function Editor({
                             }}
                         >
                             Escrever
-                        </button>
-                        <button
-                            className={`transition-all ${
+                        </span>
+                        <span
+                            className={`cursor-pointer transition-all ${
                                 editor?.editorState.isPreviewTabShown
                                     ? "text-blue-500"
                                     : ""
@@ -96,32 +90,32 @@ export function Editor({
                             }}
                         >
                             Visualizar
-                        </button>
+                        </span>
                     </div>
                     <div className="flex items-center gap-3">
                         <Tooltip message="Ajuda">
-                            <button
-                                onClick={() =>
+                            <span
+                                onClick={() => {
                                     editor?.dispatchEditorState({
                                         type: "TOGGLE_HELP_TAB",
-                                    })
-                                }
-                                className="rounded-md p-1 hover:bg-gray-200"
+                                    });
+                                }}
+                                className="cursor-pointer rounded-md p-1 hover:bg-gray-200"
                             >
                                 <MdOutlineHelpCenter size={16} />
-                            </button>
+                            </span>
                         </Tooltip>
                         <Tooltip message="Tela cheia">
-                            <button
-                                className="rounded-md p-1 hover:bg-gray-200"
-                                onClick={() =>
+                            <span
+                                className="cursor-pointer rounded-md p-1 hover:bg-gray-200"
+                                onClick={() => {
                                     editor?.dispatchEditorState({
                                         type: "TOGGLE_FULLSCREEN",
-                                    })
-                                }
+                                    });
+                                }}
                             >
                                 <RiFullscreenLine />
-                            </button>
+                            </span>
                         </Tooltip>
                     </div>
                 </div>
@@ -160,9 +154,9 @@ export function Editor({
                     >
                         <textarea
                             defaultValue={
-                                (editor?.isUpdating &&
-                                    editor?.contentToUpdate) ||
-                                ""
+                                editor?.isUpdating
+                                    ? editor?.contentToUpdate
+                                    : ""
                             }
                             name="content"
                             ref={editor?.MDERef}
@@ -171,9 +165,10 @@ export function Editor({
                                 {
                                     "min-h-[192px]": editor?.commentForm,
                                     "h-[40vh]": editor?.postForm,
+                                    "h-full": editor?.editorState.isFullscreen,
                                 }
                             )}
-                            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                            onChange={(e) => {
                                 editor?.commentForm?.setValue(
                                     "content",
                                     e.target.value
@@ -210,23 +205,24 @@ export function Editor({
             {editor?.commentForm && (
                 <div className="mt-4 flex justify-end gap-4 text-sm">
                     <button
+                        type="reset"
                         onClick={() => {
-                            if (!editor?.setIsReplying) return;
-                            editor?.setIsReplying(false);
+                            if (!editor?.setIsCommenting) return;
+                            editor?.setIsCommenting(false);
                         }}
                     >
                         Cancelar
                     </button>
                     <button
+                        type="submit"
                         disabled={editor?.editorState.isSubmitting}
-                        onClick={handleSubmit}
                         className="btn-sm-green font-medium text-white"
                     >
                         Publicar
                     </button>
                 </div>
             )}
-        </div>
+        </form>
     );
 }
 
@@ -263,9 +259,14 @@ function HelpTab({
                             !fullscreen && isPostEditor,
                     })}
                 >
-                    <button className="ml-auto" onClick={() => setOpen(false)}>
+                    <span
+                        className="ml-auto cursor-pointer"
+                        onClick={() => {
+                            setOpen(false);
+                        }}
+                    >
                         <IoCloseOutline size={24} />
-                    </button>
+                    </span>
                     <h2 className="mb-4 font-medium">Referência de Markdown</h2>
                     <ul className="space-y-2">
                         {helpTabItems.map((item, i) => (
