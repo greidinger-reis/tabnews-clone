@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useAtom } from "jotai";
 import {
     useReducer,
     type Dispatch,
@@ -16,28 +18,27 @@ import {
     useTextAreaMarkdownEditor,
 } from "react-mde";
 import type { PostFormData } from "~/pages/publicar";
+import { PostIdAtom } from "~/pages/[userName]/[slug]";
 import { trpc } from "~/utils/trpc";
 import type { CommentFormData } from "../CommentEditor";
 import { editorReducer, INITIAL_STATE } from "./reducer";
 
 export type EditorProps = {
     commentEditor?: {
-        postId: string;
-        parentId?: string;
-        setIsReplying: Dispatch<SetStateAction<boolean>>;
-        isUpdating?: boolean;
-        commentId?: string;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         commentForm: UseFormReturn<CommentFormData, any>;
+        setIsCommenting: Dispatch<SetStateAction<boolean>>;
+        parentId?: string;
+        isUpdating?: boolean;
+        commentIdToUpdate?: string;
     };
     postEditor?: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         postForm: UseFormReturn<PostFormData, any>;
     };
 };
 
 export function useEditor({ commentEditor, postEditor }: EditorProps) {
     const trpcContext = trpc.useContext();
+    const [postId] = useAtom(PostIdAtom);
 
     const [editorState, dispatchEditorState] = useReducer(
         editorReducer,
@@ -59,11 +60,11 @@ export function useEditor({ commentEditor, postEditor }: EditorProps) {
     const { mutateAsync: createComment } = trpc.comments.create.useMutation({
         onSuccess: () => {
             if (!commentEditor) return;
-            commentEditor?.setIsReplying(false);
+            commentEditor?.setIsCommenting(false);
             dispatchEditorState({ type: "TOGGLE_IS_SUBMITTING" });
             commentEditor.commentForm.reset();
             trpcContext.comments.list.invalidate({
-                postId: commentEditor.postId,
+                postId,
             });
         },
     });
@@ -71,11 +72,11 @@ export function useEditor({ commentEditor, postEditor }: EditorProps) {
     const { mutateAsync: updateComment } = trpc.comments.update.useMutation({
         onSuccess: () => {
             if (!commentEditor) return;
-            commentEditor?.setIsReplying(false);
+            commentEditor?.setIsCommenting(false);
             dispatchEditorState({ type: "TOGGLE_IS_SUBMITTING" });
             commentEditor.commentForm.reset();
             trpcContext.comments.list.invalidate({
-                postId: commentEditor.postId,
+                postId,
             });
         },
     });
@@ -84,9 +85,9 @@ export function useEditor({ commentEditor, postEditor }: EditorProps) {
         dispatchEditorState({ type: "TOGGLE_IS_SUBMITTING" });
 
         if (commentEditor?.isUpdating) {
-            if (!commentEditor.commentId) return;
+            if (!commentEditor.commentIdToUpdate) return;
             await updateComment({
-                id: commentEditor.commentId,
+                id: commentEditor.commentIdToUpdate,
                 content: data.content,
             });
             return;
@@ -95,7 +96,7 @@ export function useEditor({ commentEditor, postEditor }: EditorProps) {
         if (!commentEditor) return;
 
         await createComment({
-            postId: commentEditor?.postId,
+            postId,
             parentId: commentEditor?.parentId,
             content: data.content,
         });
@@ -140,6 +141,8 @@ export function useEditor({ commentEditor, postEditor }: EditorProps) {
                     break;
                 case "C":
                     event.preventDefault();
+                    commandController.executeCommand("codeBlock");
+                    commandController.executeCommand("codeBlock");
                     commandController.executeCommand("codeBlock");
                     break;
                 case "U":

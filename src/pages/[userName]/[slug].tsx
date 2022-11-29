@@ -1,6 +1,5 @@
 import { trpc } from "~/utils/trpc";
 import { Post } from "~/components/Post";
-import { CommentForm } from "~/components/comments/CommentForm";
 import { CommentList } from "~/components/comments/CommentList";
 import { atom, useAtom } from "jotai";
 import { formatComments } from "~/components/comments/formatComment";
@@ -16,6 +15,7 @@ import { appRouter } from "~/server/trpc/router/_app";
 import { createContextInner } from "~/server/trpc/context";
 import superjson from "superjson";
 import type { DehydratedState } from "@tanstack/react-query";
+import { CommentEditor } from "~/components/Editor/CommentEditor";
 
 interface RouterParams {
     userName: string;
@@ -69,7 +69,7 @@ export default function PostPage({
 
     const [, setPostId] = useAtom(PostIdAtom);
 
-    const [isReplying, setIsReplying] = useState(false);
+    const [isCommenting, setIsCommenting] = useState(false);
 
     const { data } = trpc.posts.find.useQuery(
         { slug, username: userName },
@@ -92,11 +92,10 @@ export default function PostPage({
                     <div className="space-y-4">
                         <Post post={data} />
                         <div className="mx-2 max-w-4xl rounded-md border border-zinc-300 py-4 px-3 sm:mx-auto sm:px-6">
-                            <CommentForm
-                                replyingToPost={true}
-                                isReplying={isReplying}
-                                setIsReplying={setIsReplying}
-                                postId={id}
+                            <CommentEditor
+                                isCommenting={isCommenting}
+                                setIsCommenting={setIsCommenting}
+                                isRootComment={true}
                             />
                         </div>
                         {comments && (

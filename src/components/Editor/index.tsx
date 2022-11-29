@@ -1,6 +1,7 @@
 import { Transition } from "@headlessui/react";
 import classNames from "classnames";
 import Markdown from "markdown-to-jsx";
+import dynamic from "next/dynamic";
 import {
     Fragment,
     type ChangeEvent,
@@ -22,7 +23,7 @@ export function Editor({
         isReplying?: boolean;
         setIsReplying?: Dispatch<SetStateAction<boolean>>;
         isUpdating?: boolean;
-        content?: string;
+        contentToUpdate?: string;
     };
 }) {
     function handleSubmit() {
@@ -31,6 +32,8 @@ export function Editor({
             return;
         }
     }
+
+    const PreBlock = dynamic(() => import("./Code"), { ssr: false });
 
     return (
         <div
@@ -134,9 +137,19 @@ export function Editor({
                             }
                         )}
                     >
-                        <Markdown options={{ disableParsingRawHTML: true }}>
+                        <Markdown
+                            options={{
+                                disableParsingRawHTML: true,
+                                overrides: {
+                                    pre: {
+                                        component: PreBlock,
+                                    },
+                                },
+                            }}
+                        >
                             {editor?.commentForm
-                                ? editor?.commentForm?.getValues("content")
+                                ? editor?.commentForm?.getValues("content") ??
+                                  ""
                                 : editor?.postForm?.getValues("content") ?? ""}
                         </Markdown>
                     </div>
@@ -147,7 +160,9 @@ export function Editor({
                     >
                         <textarea
                             defaultValue={
-                                (editor?.isUpdating && editor?.content) || ""
+                                (editor?.isUpdating &&
+                                    editor?.contentToUpdate) ||
+                                ""
                             }
                             name="content"
                             ref={editor?.MDERef}
@@ -193,7 +208,7 @@ export function Editor({
                 </div>
             )}
             {editor?.commentForm && (
-                <div className="ml-auto mt-4 flex gap-4 text-sm">
+                <div className="mt-4 flex justify-end gap-4 text-sm">
                     <button
                         onClick={() => {
                             if (!editor?.setIsReplying) return;

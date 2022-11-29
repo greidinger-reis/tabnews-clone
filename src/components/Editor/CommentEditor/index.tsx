@@ -10,54 +10,83 @@ export type CommentFormData = {
     content: string;
 };
 
-export function CommentEditor(props: {
-    postId: string;
+type CommentEditorStateActionsProps = {
+    isCommenting: boolean;
+    setIsCommenting: Dispatch<SetStateAction<boolean>>;
+};
+
+type CommentEditorProps = {
+    isRootComment?: boolean;
     parentId?: string;
-    replyingToPost?: boolean;
-    isReplying: boolean;
-    setIsReplying: Dispatch<SetStateAction<boolean>>;
-    isUpdating?: boolean;
-    content?: string;
-    commentId?: string;
-}) {
-    const { replyingToPost, isReplying, setIsReplying, content, isUpdating } =
-        props;
+    contentToUpdate?: string;
+    commentIdToUpdate?: string;
+} & CommentEditorStateActionsProps;
+
+function useEditorUtils() {
     const [autoAnimate] = useAutoAnimate<HTMLDivElement>();
     const commentForm = useForm<CommentFormData>();
-    const session = useSession();
-    const router = useRouter();
+    return { autoAnimate, commentForm };
+}
 
-    const editor = useEditor({ commentEditor: { ...props, commentForm } });
+export function CommentEditor({
+    isCommenting,
+    setIsCommenting,
+    parentId,
+    isRootComment,
+    commentIdToUpdate,
+    contentToUpdate,
+}: CommentEditorProps) {
+    const { autoAnimate, commentForm } = useEditorUtils();
+    const editor = useEditor({
+        commentEditor: {
+            commentForm,
+            setIsCommenting,
+            parentId,
+            commentIdToUpdate,
+            isUpdating: Boolean(commentIdToUpdate),
+        },
+    });
 
     return (
         <div ref={autoAnimate}>
-            {props.isReplying ? (
-                <Editor
-                    editor={{
-                        ...editor,
-                        isReplying,
-                        replyingToPost,
-                        setIsReplying,
-                        content,
-                        isUpdating,
-                    }}
-                />
+            {isCommenting ? (
+                <Editor editor={{ ...editor, contentToUpdate }} />
             ) : (
-                <button
-                    className={`btn-gray my-2 w-fit text-sm font-medium ${
-                        props.replyingToPost && "ml-1 sm:ml-0"
-                    }`}
-                    onClick={() => {
-                        if (session.status === "unauthenticated") {
-                            router.push("/login");
-                            return;
-                        }
-                        props.setIsReplying(!props.isReplying);
-                    }}
-                >
-                    Responder
-                </button>
+                <SetIsCommentingButton
+                    isCommenting={isCommenting}
+                    setIsCommenting={setIsCommenting}
+                    isRootCommentButton={isRootComment}
+                />
             )}
         </div>
+    );
+}
+
+function SetIsCommentingButton(props: {
+    isRootCommentButton?: boolean;
+    isCommenting: boolean;
+    setIsCommenting: Dispatch<SetStateAction<boolean>>;
+}) {
+    const router = useRouter();
+    const session = useSession();
+    const { isCommenting, isRootCommentButton, setIsCommenting } = props;
+
+    function handleSetIsCommenting() {
+        if (session.status === "unauthenticated") {
+            router.push("/login");
+            return;
+        }
+        setIsCommenting(!isCommenting);
+    }
+
+    return (
+        <button
+            className={`btn-gray my-2 w-fit text-sm font-medium ${
+                isRootCommentButton && "ml-1 sm:ml-0"
+            }`}
+            onClick={handleSetIsCommenting}
+        >
+            Responder
+        </button>
     );
 }

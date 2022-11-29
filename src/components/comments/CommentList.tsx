@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { CommentForm } from "./CommentForm";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { formatDistance } from "date-fns";
 import { trpc } from "~/utils/trpc";
@@ -15,6 +14,7 @@ import Dropdown from "../headlessui/Dropdown";
 import { Menu } from "@headlessui/react";
 import type { CommentWithChildren } from "./types";
 import { useRouter } from "next/router";
+import { CommentEditor } from "../Editor/CommentEditor";
 
 function Comment({
     id,
@@ -31,7 +31,7 @@ function Comment({
     const router = useRouter();
     const [postId] = useAtom(PostIdAtom);
     const [autoAnimate] = useAutoAnimate<HTMLLIElement>();
-    const [isReplying, setIsReplying] = useState(false);
+    const [isCommenting, setIsCommenting] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
 
     function handleInvalidateComments() {
@@ -79,7 +79,7 @@ function Comment({
             router.push("/login");
             return;
         }
-        setIsReplying(true);
+        setIsCommenting(true);
         setIsUpdating(true);
     }
 
@@ -163,21 +163,17 @@ function Comment({
                     </Markdown>
                 </div>
                 {isUpdating ? (
-                    <CommentForm
-                        postId={postId}
-                        parentId={id}
-                        isReplying={isReplying}
-                        setIsReplying={setIsReplying}
-                        isUpdating={isUpdating}
-                        content={content}
-                        id={id}
+                    <CommentEditor
+                        isCommenting={isCommenting}
+                        setIsCommenting={setIsCommenting}
+                        commentIdToUpdate={id}
+                        contentToUpdate={content}
                     />
                 ) : (
-                    <CommentForm
-                        postId={postId}
+                    <CommentEditor
+                        isCommenting={isCommenting}
+                        setIsCommenting={setIsCommenting}
                         parentId={id}
-                        isReplying={isReplying}
-                        setIsReplying={setIsReplying}
                     />
                 )}
                 {children && children.length > 0 && (
