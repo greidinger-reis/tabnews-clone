@@ -7,6 +7,7 @@ import { trpc } from "~/utils/trpc";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Likes } from "./Likes";
+import Link from "next/link";
 
 type PostQueryOutput = Outputs["posts"]["find"];
 
@@ -68,9 +69,15 @@ export function Post({ post }: { post: PostQueryOutput }) {
             />
             <main>
                 <div>
-                    <span className="mono rounded-md bg-[#ddf4ff] px-2 py-1 text-xs text-blue-500">
+                    <Link
+                        href={`/${post.author.username}`}
+                        className="mono rounded-md bg-[#ddf4ff] px-2 py-1 text-xs text-blue-500"
+                        style={{
+                            textDecoration: "none",
+                        }}
+                    >
                         {post.author.username}
-                    </span>
+                    </Link>
                     <span className="ml-2 text-[12px]">
                         {formatDistance(new Date(post.createdAt), new Date(), {
                             locale: ptBR,

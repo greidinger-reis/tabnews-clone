@@ -26,7 +26,6 @@ export function Editor({
     const PreBlock = dynamic(() => import("./Code"), { ssr: false });
 
     useEffect(() => {
-        console.log("asdokasodk");
         editor?.commentForm?.register("content", { required: true });
     });
 

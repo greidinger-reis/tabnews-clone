@@ -82,7 +82,6 @@ export function useEditor({ commentEditor, postEditor }: EditorProps) {
     });
 
     async function submitComment(data: CommentFormData) {
-        console.log(data);
         dispatchEditorState({ type: "TOGGLE_IS_SUBMITTING" });
 
         if (commentEditor?.isUpdating) {
