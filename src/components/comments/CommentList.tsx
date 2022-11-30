@@ -15,6 +15,7 @@ import { Menu } from "@headlessui/react";
 import type { CommentWithChildren } from "./types";
 import { useRouter } from "next/router";
 import { CommentEditor } from "../Editor/CommentEditor";
+import dynamic from "next/dynamic";
 
 function Comment({
     id,
@@ -87,7 +88,8 @@ function Comment({
     const userHasLiked =
         likes?.some((like) => like.userId === session?.data?.user?.id) ?? false;
 
-    // const PreBlock = dynamic(() => import("../Code"), { ssr: false });
+    const PreBlock = dynamic(() => import("../Editor/Code"), { ssr: false });
+
     return (
         <div className="flex">
             <Likes
@@ -154,9 +156,9 @@ function Comment({
                     <Markdown
                         options={{
                             disableParsingRawHTML: true,
-                            // overrides: {
-                            //     pre: PreBlock,
-                            // },
+                            overrides: {
+                                pre: PreBlock,
+                            },
                         }}
                     >
                         {content}
@@ -166,6 +168,7 @@ function Comment({
                     <CommentEditor
                         isCommenting={isCommenting}
                         setIsCommenting={setIsCommenting}
+                        setIsUpdating={setIsUpdating}
                         commentIdToUpdate={id}
                         contentToUpdate={content}
                     />
@@ -173,6 +176,7 @@ function Comment({
                     <CommentEditor
                         isCommenting={isCommenting}
                         setIsCommenting={setIsCommenting}
+                        setIsUpdating={setIsUpdating}
                         parentId={id}
                     />
                 )}

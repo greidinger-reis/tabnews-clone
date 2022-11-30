@@ -18,6 +18,7 @@ export function Editor({
         isRootComment?: boolean;
         isCommenting?: boolean;
         setIsCommenting?: Dispatch<SetStateAction<boolean>>;
+        setIsUpdating?: Dispatch<SetStateAction<boolean>>;
         isUpdating?: boolean;
         contentToUpdate?: string;
     };
@@ -153,11 +154,7 @@ export function Editor({
                         })}
                     >
                         <textarea
-                            defaultValue={
-                                editor?.isUpdating
-                                    ? editor?.contentToUpdate
-                                    : ""
-                            }
+                            defaultValue={editor?.contentToUpdate}
                             name="content"
                             ref={editor?.MDERef}
                             className={classNames(
@@ -207,8 +204,13 @@ export function Editor({
                     <button
                         type="reset"
                         onClick={() => {
-                            if (!editor?.setIsCommenting) return;
-                            editor?.setIsCommenting(false);
+                            if (
+                                !editor.setIsCommenting ||
+                                !editor.setIsUpdating
+                            )
+                                return;
+                            editor.setIsCommenting(false);
+                            editor.setIsUpdating(false);
                         }}
                     >
                         Cancelar

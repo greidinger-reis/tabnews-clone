@@ -13,6 +13,7 @@ export type CommentFormData = {
 type CommentEditorStateActionsProps = {
     isCommenting: boolean;
     setIsCommenting: Dispatch<SetStateAction<boolean>>;
+    setIsUpdating: Dispatch<SetStateAction<boolean>>;
 };
 
 type CommentEditorProps = {
@@ -29,6 +30,7 @@ export function CommentEditor({
     isRootComment,
     commentIdToUpdate,
     contentToUpdate,
+    setIsUpdating,
 }: CommentEditorProps) {
     const [autoAnimate] = useAutoAnimate<HTMLDivElement>();
     const commentForm = useForm<CommentFormData>();
@@ -52,6 +54,7 @@ export function CommentEditor({
                         isRootComment,
                         isCommenting,
                         setIsCommenting,
+                        setIsUpdating,
                         contentToUpdate,
                     }}
                 />
